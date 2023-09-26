@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Saveforest.ai</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/styles/style.css">
+  </head>
+  <body>
+    <!-- padd top -->
+    <div class="vh-3"></div>
+    <div class="container-fluid text-center rounded-4 px-4 py-4 vh-90 h-50 bg-dark-gray">
+        <div class="row">
+          <div class="fs-2 col-lg-2 py-4 vh-80 rounded-4 bg-grad-highlight ">
+            <h2>Saveforest.ai</h2>
+            <div class="d-grid gap-2">
+                <button class="btn btn-primary btn-lg navbar-btn">Dashboard</button>
+                <button class="btn btn-primary btn-lg navbar-btn">Location</button>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row">
+                <div class="col vh-35 m-3 py-4 graph"><canvas class="graph" id="graph1"></canvas></div>
+                <div class="col vh-35 m-3 py-4 graph"><canvas class="graph" id="graph2"></canvas></div>
+                <div class="col vh-35 m-3 py-4 graph"><canvas class="graph" id="graph3"></canvas></div>
+            </div>
+            <div class="row">
+                <div class="col-2 vh-35 m-3 py-4 bg-blue">
+                    
+                </div>
+                <div class="col vh-35 m-3 bg-blue"></div>
+                <!-- <div class="col vh-35 m-3"></div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
+  
+    <script>
+        function createSensorGraph(id, label) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [0,1,2,3,4,5],
+                datasets:[{
+                    label: label,
+                    data: [12, 14, 11, 4, 50, 24, 0],
+                    fill: false,
+                    // tension: 0.1,
+                    backgroundColor: '#FF4301',
+                    borderColor: '#FF4301',
+                    color: '#FFFFFF',
+                    // fontColor:'#FFFFFF',
+                }]
+            },
+            options: {
+                responsive:true,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'white',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'white',
+                        }
+                    }
+                }
+            }
+            });
+
+            return chart;
+        }
+
+        Chart.defaults.color = 'white';
+
+        createSensorGraph('graph1', 'sensor1');
+        createSensorGraph('graph2', 'sensor2');
+        createSensorGraph('graph3', 'sensor3');
+    </script>
+
+</html>

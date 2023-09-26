@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: 
+      context: .
+      dockerfile: ./backend.dev.Dockerfile
+    command: npm run dev
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: 
+      context: .
+      dockerfile: ./frontend.dev.Dockerfile
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
