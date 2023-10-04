@@ -24,6 +24,9 @@ body{
 .bg-red{
     background-color: red;
 }
+.bg-green{
+    background-color: greenyellow;
+}
 .bg-highlight{
     background-color:var(--color-highlight);
 }
@@ -54,13 +57,18 @@ body{
 }
 
 .graph{
-    background-image: linear-gradient(to 
+    /* background-image: linear-gradient(to 
                         bottom right, 
                         rgb(103, 119, 224),
                         rgb(44, 94, 232),
                         rgb(18, 71, 219),
-                        rgb(3, 0, 150));
-    border-radius: 20px;
+                        rgb(3, 0, 150)); */
+    background-color: #2b2b2b;
+    /* border-radius: 20px; */
+}
+
+.bg-dash-graph{
+    background-color: #1D1C1C;
 }
 
 .info-box{
@@ -71,4 +79,24 @@ body{
                         rgb(219, 18, 18),
                         rgb(150, 0, 0));
     border-radius: 20px;
+}
+
+
+
+
+
+
+
+
+#map-container { 
+    padding: 1vw;
+    background-color: #252354;    
+    border-radius: 20px;
+}
+
+#map { 
+    margin: 10px;
+    /* border-radius: 20px; */
+    width: 50vw;
+    height: 57vh; 
 }
