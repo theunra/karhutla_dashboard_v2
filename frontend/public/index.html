@@ -13,77 +13,17 @@
     <link rel="stylesheet" href="/styles/style.css">
   </head>
   <body>
-    <!-- padd top -->
-    <!-- <div class="vh-3"></div> -->
     <div class="container-fluid text-center rounded-4 px-4 py-4" style="height: 98vh;">
+        <!-- Navbar -->
         <div class="row" style="background-image: linear-gradient(to right, #3D3D3D, #2b2b2b);">
             <div class="col"><i class="bi bi bi-tree" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
             <div class="col-9 fs-3" style="text-align: start;"><span>Saveforest.ai</span></div>
-            <div class="col"><i class="bi bi bi-laptop" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
-            <div class="col"><i class="bi bi bi-geo-alt" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+            <div class="col"><i class="bi bi bi-laptop" onclick="onDashIconClick()" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+            <div class="col"><i class="bi bi bi-geo-alt" onclick="onLocIconClick()" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
             <div class="col"><i class="bi bi bi-gear" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
         </div>
-        <div class="row">
-            <div class="col-5 m-3 " style="height: 86vh;">
-                <div class="row bg-dash-graph" style="height: 42vh;">
-                    <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="graph1" style="height: 40vh; width: 30vw;"></canvas></div>
-                    <div class="col py-2 m-1" style="height: 40vh;">
-                        <div class="row">
-                            <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
-                            <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                            <div class="col" style="text-align: center; font-size: 1.1vw;">30.2</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: blue;"></i></div>
-                            <div class="col-3" style="text-align: start; color: blue;"><span style="font-size: 1.2vw;">NO3</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                            <div class="col" style="text-align: center; font-size: 1.1vw;">15.02</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row bg-dash-graph my-3" style="height: 42vh;">
-                    <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="graph2" style="height: 40vh; width: 30vw;"></canvas></div>
-                    <div class="col py-2 m-1" style="height: 40vh;">
-                        <div class="row">
-                            <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
-                            <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                            <div class="col" style="text-align: center; font-size: 1.1vw;">30.2</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: blue;"></i></div>
-                            <div class="col-3" style="text-align: start; color: blue;"><span style="font-size: 1.2vw;">NO3</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                            <div class="col" style="text-align: center; font-size: 1.1vw;">15.02</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col m-3" style="height: 86vh;">
-                <div class="row" style="height: 60vh; background-color: #1D1C1C;">
-                    <div id="map"></div>
-                </div>
-                <div class="row my-3" style="height: 24vh;">
-                    <div class="col me-2" style="background-color: #1D1C1C;">
-                        <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
-                        <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">13.7 m/s</div>
-                        <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">Airspeed</div>
-                    </div>
-                    <div class="col me-2" style="background-color: #1D1C1C;">
-                        <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
-                        <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">13.7 m/s</div>
-                        <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">Airspeed</div>
-                    </div>
-                    <div class="col me-2" style="background-color: #1D1C1C;">
-                        <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
-                        <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">13.7 m/s</div>
-                        <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">Airspeed</div>
-                    </div>
-                    <div class="col" style="background-color: #1D1C1C;">
-                        <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
-                        <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">13.7 m/s</div>
-                        <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">Airspeed</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Content -->
+        <div class="row" id="content"></div>
     </div>
       
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
@@ -95,6 +35,73 @@
   </body>
   
     <script>
+        function createContentLayout(name){
+            const content = document.getElementById("content");
+            switch(name){
+                case "dash":
+                    content.innerHTML =
+                    `
+                    <div class="col-5 m-3" id="sensor-monitors" style="height: 86vh;"></div>
+                    <div class="col m-3" style="height: 86vh;">
+                        <div class="row" style="height: 60vh; background-color: #1D1C1C;"><div id="map"></div></div>
+                        <div class="row my-3" id="monitor-container" style="height: 24vh;"></div>
+                    </div>
+                    `;
+                    break;
+                case "loc":
+                    content.innerHTML =
+                    `
+                    <div class="col m-3" style="height: 86vh;">
+                        <div class="row" style="height: 60vh;">
+                            <div class="col me-3" style="height: 86vh; background-color: #1D1C1C;"> 
+                                <div id="map-l"></div>
+                            </div>
+                            <div class="col-5 bg-red ">
+                                <div class="row mb-3" id="monitor-container-1" style="height: 24vh;"></div>
+                                <div class="row mb-3" id="monitor-container-2" style="height: 24vh;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    break;
+            }
+        }
+
+        function createStatusMonitor(id, data){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML += 
+            `
+            <div class="col me-2" style="background-color: #1D1C1C;">
+                <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
+                <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">${data.value}</div>
+                <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
+            </div>
+            `;
+        }
+
+
+        function createSensorMonitor(id, graph_id){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="${graph_id}" style="height: 40vh; width: 30vw;"></canvas></div>
+                <div class="col py-2 m-1" style="height: 40vh;">
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
+                        <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">30.2</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: blue;"></i></div>
+                        <div class="col-3" style="text-align: start; color: blue;"><span style="font-size: 1.2vw;">NO3</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">15.02</div>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+
         function createSensorGraph(id, label) {
             const ctx = document.getElementById(id);
             const chart = new Chart(ctx, {
@@ -152,47 +159,68 @@
 
         Chart.defaults.color = 'white';
 
-        createSensorGraph('graph1', 'sensor1');
-        createSensorGraph('graph2', 'sensor2');
-        createSensorGraph('graph3', 'sensor3');
+        function createMap(id){
+            var map = L.map(id).setView([51.505, -0.09], 13);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
 
+            var myIcon = L.divIcon({className: 'my-div-icon'});
+            L.marker([51.505, -0.09], {icon: myIcon}).addTo(map);
 
+            var legend = L.control({position: 'bottomright'});
 
-        var map = L.map('map').setView([51.505, -0.09], 13);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
+            legend.onAdd = function (map) {
 
-        var myIcon = L.divIcon({className: 'my-div-icon'});
-        L.marker([51.505, -0.09], {icon: myIcon}).addTo(map);
+                var div = L.DomUtil.create('div', 'info legend'),
+                    //grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+                    grades = [0, 12, 25, 37, 50, 62, 75, 87], //pretty break untuk 8
+                    labels = [],
+                    from, to;
 
-        var legend = L.control({position: 'bottomright'});
+                for (var i = 0; i < grades.length; i++) {
+                    from = grades[i];
+                    to = grades[i + 1];
 
-		legend.onAdd = function (map) {
+                    labels.push(
+                        '<i style="background:' + '#FFFFFF' + '"></i> ' +
+                        from + (to ? '&ndash;' + to : '+'));
+                }
 
-			var div = L.DomUtil.create('div', 'info legend'),
-				//grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-				grades = [0, 12, 25, 37, 50, 62, 75, 87], //pretty break untuk 8
-				labels = [],
-				from, to;
+                // div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
+                div.innerHTML = '<div class="rounded" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">Altitude<br>150m<br>Latitude<br>-6.52325<br>Longitude<br>102.52135</div>';
+                return div;
+            };
 
-			for (var i = 0; i < grades.length; i++) {
-				from = grades[i];
-				to = grades[i + 1];
+            legend.addTo(map);
+        }
 
-				labels.push(
-					'<i style="background:' + '#FFFFFF' + '"></i> ' +
-					from + (to ? '&ndash;' + to : '+'));
-			}
+        function onDashIconClick(){
+            createContentLayout("dash");
+            createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
+            createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container", {name : "Temperature", value:"76 °C"});
+            createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
+            createSensorMonitor("sensor-monitors", "graph1");
+            createSensorMonitor("sensor-monitors", "graph2");
+            createSensorGraph('graph1', 'sensor1');
+            createSensorGraph('graph2', 'sensor2');
+            createMap("map");
+        }
 
-			// div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
-            div.innerHTML = '<div class="rounded" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">Altitude<br>150m<br>Latitude<br>-6.52325<br>Longitude<br>102.52135</div>';
-			return div;
-		};
+        function onLocIconClick(){
+            createContentLayout("loc");
+            createMap("map-l");
+            createStatusMonitor("monitor-container-1", {name : "Airspeed", value:"13.7 m/s"});
+            createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"76 °C"});
+            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
+            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
+        }
 
-		legend.addTo(map);
-
+        onLocIconClick()
     </script>
 
 </html>

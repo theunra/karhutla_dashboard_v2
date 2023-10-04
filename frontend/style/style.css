@@ -100,3 +100,10 @@ body{
     width: 50vw;
     height: 57vh; 
 }
+
+#map-l { 
+    margin: 10px;
+    /* border-radius: 20px; */
+    width: 50vw;
+    height: 84vh; 
+}
