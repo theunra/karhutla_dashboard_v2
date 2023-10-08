@@ -1,8 +1,10 @@
 const express = require('express')
 const http = require('http');
+const {Server} = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server);
 const port = 3000;
 
 app.get('/', (req, res) => {
@@ -11,6 +13,15 @@ app.get('/', (req, res) => {
 
 app.use('/styles',express.static(__dirname + '/style'))
 
+io.on('connection', (socket) => {
+    console.log('new connection');
+    // setInterval(()=>{
+    //     socket.emit('update', {data:20});
+    // }, 3000);
+});
+
+
 server.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
+

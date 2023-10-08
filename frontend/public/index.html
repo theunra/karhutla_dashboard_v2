@@ -26,6 +26,7 @@
         <div class="row" id="content"></div>
     </div>
       
+    <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
             crossorigin="anonymous"></script>
@@ -56,7 +57,7 @@
                             <div class="col me-3" style="height: 86vh; background-color: #1D1C1C;"> 
                                 <div id="map-l"></div>
                             </div>
-                            <div class="col-5 bg-red ">
+                            <div class="col-5 ">
                                 <div class="row mb-3" id="monitor-container-1" style="height: 24vh;"></div>
                                 <div class="row mb-3" id="monitor-container-2" style="height: 24vh;"></div>
                             </div>
@@ -90,12 +91,39 @@
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
                         <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">30.2</div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">2.98</div>
                     </div>
                     <div class="row">
-                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: blue;"></i></div>
-                        <div class="col-3" style="text-align: start; color: blue;"><span style="font-size: 1.2vw;">NO3</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">15.02</div>
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
+                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.78</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
+                        <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">CH4</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.5</div>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+
+        function createSensorMonitor2(id, graph_id){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="${graph_id}" style="height: 40vh; width: 30vw;"></canvas></div>
+                <div class="col py-2 m-1" style="height: 40vh;">
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
+                        <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.56</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
+                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">VOC</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
+                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.53</div>
                     </div>
                 </div>
             </div>
@@ -107,10 +135,10 @@
             const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['12:30', '12:32', '12:35', '12:39', '12:41', '12:46', '12:50'],
+                labels: ['12:30:20', '12:30:22', '12:30:24', '12:30:26', '12:30:28', '12:30:30', '12:30:33'],
                 datasets:[{
                     label: 'label',
-                    data: [12, 14, 11, 4, 50, 24, 0],
+                    data: [2.8, 2.7, 2.65, 2.94, 2.98, 2.96, 2.98],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: '#FF4301',
@@ -120,11 +148,76 @@
                 },
                 {
                     label: label,
-                    data: [12, 52, 43, 23, 10, 22, 22],
+                    data: [0.78, 0.76, 0.75, 0.78, 0.78, 0.78, 0.78],
                     fill: false,
                     tension: 0.3,
-                    backgroundColor: 'blue',
-                    borderColor: 'blue',
+                    backgroundColor: 'aqua',
+                    borderColor: 'aqua',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [0.5, 0.5, 0.54, 0.45, 0.5, 0.5, 0.5],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'greenyellow',
+                    borderColor: 'greenyellow',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                }]
+            },
+            options: {
+                responsive:false,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    }
+                },
+                plugins:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            }
+            });
+
+            return chart;
+        }
+
+        function createSensorGraph2(id, label) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['12:30:20', '12:30:22', '12:30:24', '12:30:26', '12:30:28', '12:30:30', '12:30:33'],
+                datasets:[{
+                    label: 'label',
+                    data: [0.53, 0.51, 0.52, 0.53, 0.52, 0.52, 0.53],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: '#FF4301',
+                    borderColor: '#FF4301',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [0.54, 0.54, 0.56, 0.54, 0.56, 0.56, 0.56],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'aqua',
+                    borderColor: 'aqua',
                     color: '#444444',
                     // fontColor:'#FFFFFF',
                 }]
@@ -160,14 +253,14 @@
         Chart.defaults.color = 'white';
 
         function createMap(id){
-            var map = L.map(id).setView([51.505, -0.09], 13);
+            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 13);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
             var myIcon = L.divIcon({className: 'my-div-icon'});
-            L.marker([51.505, -0.09], {icon: myIcon}).addTo(map);
+            L.marker([-7.761728519274012, 110.23037834124277], {icon: myIcon}).addTo(map);
 
             var legend = L.control({position: 'bottomright'});
 
@@ -189,7 +282,7 @@
                 }
 
                 // div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
-                div.innerHTML = '<div class="rounded" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">Altitude<br>150m<br>Latitude<br>-6.52325<br>Longitude<br>102.52135</div>';
+                div.innerHTML = '<div class="rounded" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">Altitude<br>1m<br>Latitude<br>-7.767341<br>Longitude<br>110.226859</div>';
                 return div;
             };
 
@@ -200,12 +293,12 @@
             createContentLayout("dash");
             createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
             createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
-            createStatusMonitor("monitor-container", {name : "Temperature", value:"76 °C"});
-            createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
+            createStatusMonitor("monitor-container", {name : "Temperature", value:"43 °C"});
+            // createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
             createSensorMonitor("sensor-monitors", "graph1");
-            createSensorMonitor("sensor-monitors", "graph2");
+            createSensorMonitor2("sensor-monitors", "graph2");
             createSensorGraph('graph1', 'sensor1');
-            createSensorGraph('graph2', 'sensor2');
+            createSensorGraph2('graph2', 'sensor2');
             createMap("map");
         }
 
@@ -214,13 +307,83 @@
             createMap("map-l");
             createStatusMonitor("monitor-container-1", {name : "Airspeed", value:"13.7 m/s"});
             createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
-            createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
-            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"76 °C"});
-            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
-            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
+            // createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"62 °C"});
+            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"12 %"});
+            // createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
         }
 
-        onLocIconClick()
+        onDashIconClick();
+        // onLocIconClick()
+
+        
+        var socket = io();
+        var is_open = false;
+        var current_query = '';
+
+        socket.on('update', (msg) => {
+            console.log('update');
+            console.log(msg);
+            // if(current_query != ''){
+            //     console.log('get data');
+            //     socket.emit('query_data', {'id' : current_query});
+            // }
+        }); // data in database updated
+    </script>
+
+    <script>
+        // const ADDR = '172.25.27.177'
+        const ADDR = '192.168.131.187'
+        const PORT = 8000
+
+        var ws = new WebSocket(`ws://${ADDR}:${PORT}/`);
+        // var ws_connected = false
+        ws.onmessage = (msg) => {
+            ws_connected = true
+            //   const rawdata = msg.data
+            console.log(msg)
+
+            //   const data = rawdata.replace(/[^\d,.^\n^\-]/g,"");
+
+            //   console.log(data)
+            //   if(data.length>0) {
+            //       console.log(data.toString())
+            //       const payload = {
+            //           id : 'serialdata',
+            //           data : data.toString()
+            //       }
+            //       requestServer('backend/request',JSON.stringify(payload))
+            //   }
+        };
+
+
+        ws.onopen = (msg) => {
+            ws.send("connecting")
+            console.log("Vehicle Connected")
+            ws_connected = true
+        }
+
+        ws.onclose = (msg) => {
+            console.log("Vehicle Disconnected")
+            ws_connected = false
+            reconnectSocket(ADDR, PORT)
+        }
+
+        const connectSocket = (addr, port) =>
+        {
+            ws = new WebSocket(`ws://${addr}:${port}/`);
+        }
+
+        const reconnectSocket = (addr, port) =>
+        {
+            setTimeout(()=>{
+                connectSocket(addr, port)
+                setTimeout(()=>{
+                if(!ws_connected)
+                    reconnectSocket(addr, port)
+                }, 500)
+            }, 500)
+        }
     </script>
 
 </html>
