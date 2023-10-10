@@ -11,7 +11,9 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use('/styles',express.static(__dirname + '/style'))
+app.use('/styles',express.static(__dirname + '/style'));
+app.use('/images',express.static(__dirname + '/public/images'));
+app.use('/scripts',express.static(__dirname + '/public/scripts'));
 
 io.on('connection', (socket) => {
     console.log('new connection');

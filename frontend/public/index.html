@@ -33,6 +33,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
+    <script src="/scripts/leaflet.rotatedMarker.js"></script>
   </body>
   
     <script>
@@ -70,14 +71,29 @@
 
         function createStatusMonitor(id, data){
             const monitor = document.getElementById(id);
+            const val_id = data.name.replace(/\s/g, "").toLowerCase();
             monitor.innerHTML += 
             `
             <div class="col me-2" style="background-color: #1D1C1C;">
                 <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
-                <div style="font-size: 3vw; padding-top: 2vh; height: 13vh;">${data.value}</div>
+                <div id="${val_id}_value" style="font-size: 3vw; padding-top: 2vh; height: 13vh;">${data.value}</div>
                 <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
             </div>
             `;
+            return val_id;
+        }
+
+        function createStatusMonitorImage(id, data){
+            const monitor = document.getElementById(id);
+            const val_id = data.name.replace(/\s/g, "").toLowerCase();
+            monitor.innerHTML += 
+            `
+            <div class="col me-2" style="background-color: #1D1C1C;">
+                <canvas id="${val_id}" width=140 height=140 style="background-color: greenyellow; margin-top:10px"></canvas>
+                <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
+            </div>
+            `;
+            return val_id;
         }
 
 
@@ -91,17 +107,17 @@
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
                         <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">2.98</div>
+                        <div class="col" id="graph1_val1" style="text-align: center; font-size: 1.1vw;">2.98</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
                         <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.78</div>
+                        <div class="col" id="graph1_val2" style="text-align: center; font-size: 1.1vw;">0.78</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
                         <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">CH4</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.5</div>
+                        <div class="col" id="graph1_val3" style="text-align: center; font-size: 1.1vw;">0.5</div>
                     </div>
                 </div>
             </div>
@@ -118,12 +134,12 @@
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
                         <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.56</div>
+                        <div class="col" id="graph2_val1" style="text-align: center; font-size: 1.1vw;">0.56</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
                         <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">VOC</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
-                        <div class="col" style="text-align: center; font-size: 1.1vw;">0.53</div>
+                        <div class="col" id="graph2_val2" style="text-align: center; font-size: 1.1vw;">0.53</div>
                     </div>
                 </div>
             </div>
@@ -253,7 +269,7 @@
         Chart.defaults.color = 'white';
 
         function createMap(id){
-            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 13);
+            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 14);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -282,24 +298,164 @@
                 }
 
                 // div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
-                div.innerHTML = '<div class="rounded" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">Altitude<br>1m<br>Latitude<br>-7.767341<br>Longitude<br>110.226859</div>';
+                div.innerHTML = `<div class="rounded" id="uav_status" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">
+                                    Altitude<br><span id="altitude_status">1</span>m<br>Latitude<br><span id="latitude_status">-7.767341</span>
+                                    <br>Longitude<br><span id="longitude_status">110.226859</span></div>`;
                 return div;
             };
 
             legend.addTo(map);
+
+            var planeIcon = L.icon({
+                iconUrl: '/images/plane.png',
+                // shadowUrl: '/images/plane_s.png',
+
+                iconSize:     [60, 60], // size of the icon
+                // shadowSize:   [40, 40], // size of the shadow
+                iconAnchor:   [30, 30], // point of the icon which will correspond to marker's location
+                // shadowAnchor: [-2, 70],  // the same for the shadow
+                // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            const planeMarker = L.marker([-7.761728519274012, 110.23037834124277], {icon: planeIcon, rotationAngle:0}).addTo(map);
+
+            const latlon = [-7.761728519274012, 110.23037834124277];
+
+            var polylinePoints = [
+                [latlon[0]+ 0.0001, latlon[1]+ 0.006],
+                [latlon[0]+ 0.001, latlon[1]+ 0.005],
+                [latlon[0]+ 0.002, latlon[1]+ 0.002],
+                [latlon[0]+ 0.0024, latlon[1]+ 0.001],
+                [latlon[0]+ 0.004, latlon[1]+ 0.001]
+            ];            
+            
+            const polyline = L.polyline(polylinePoints).addTo(map);     
+            return {map: map, planeMarker: planeMarker, planeTrack: polyline};
+        }
+
+        function updateSensorMonitorValue(id, value){
+            const val = document.getElementById(id+'_value');
+            val.innerText = value;
         }
 
         function onDashIconClick(){
             createContentLayout("dash");
-            createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
-            createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
-            createStatusMonitor("monitor-container", {name : "Temperature", value:"43 °C"});
+            const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
+            const uav_speed_id = createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
+            const temperature_id = createStatusMonitor("monitor-container", {name : "Temperature", value:"43 °C"});
+            const thermal_camera = createStatusMonitorImage("monitor-container", {name: "Thermal Camera", value:"20 C"})
             // createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
             createSensorMonitor("sensor-monitors", "graph1");
             createSensorMonitor2("sensor-monitors", "graph2");
-            createSensorGraph('graph1', 'sensor1');
-            createSensorGraph2('graph2', 'sensor2');
-            createMap("map");
+            const graph1 = createSensorGraph('graph1', 'sensor1');
+            const graph2 = createSensorGraph2('graph2', 'sensor2');
+            const plane = createMap("map");
+
+             // Update graph
+             let i = 0;
+
+            var width = 400,
+                height = 400,
+                buffer = new Uint8ClampedArray(width * height * 4);
+            
+            function randomizeBuffer() {
+                for(var y = 0; y < height; y++) {
+                    for(var x = 0; x < width; x++) {
+                        const ran = Math.floor(Math.random() * 200);
+                        var pos = (y * width + x) * 4; // position in buffer based on x and y
+                        buffer[pos  ] = 50 + ran;           // some R value [0, 255]
+                        buffer[pos+1] = 150;           // some G value
+                        buffer[pos+2] = 50 + ran;           // some B value
+                        buffer[pos+3] = 255;           // set alpha channel
+                    }
+                }
+            }
+            
+            function rad_to_deg(radians)
+            {
+                var pi = Math.PI;
+                return radians * (180/pi);
+            }
+
+            setInterval(()=>{
+                console.log("update");
+                
+                ///Thermal Camera/////////////////////////////////
+                randomizeBuffer();
+                const c_thermal_camera = document.getElementById(thermal_camera);
+                const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+                ctx_thermal_camera.moveTo(0, 0);
+                ctx_thermal_camera.lineTo(200, 100);
+                ctx_thermal_camera.stroke();
+                var idata = ctx_thermal_camera.createImageData(width, height);
+                idata.data.set(buffer);
+                ctx_thermal_camera.putImageData(idata, 0, 0);
+                /////////////////////////////////////////////////
+                
+                ////Map Manipulation/////////////////////////////
+                const ran = Math.floor(Math.random() * 100) * 0.1;
+                const ran1 = Math.floor(Math.random() * 100) * 0.1;
+                
+                const last_latlon = plane.planeMarker.getLatLng();
+                const lat = -7.761728519274012 + ran * 0.001;
+                const lon = 110.23037834124277 + ran1 * 0.001;
+                const latln = new L.LatLng(lat, lon);
+                plane.planeMarker.setLatLng(latln);///
+                const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
+                plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
+                const altitude_status = document.getElementById("altitude_status");
+                altitude_status.innerText= ran.toFixed(2);
+                const latitude_status = document.getElementById("latitude_status");
+                latitude_status.innerText= lat.toFixed(6);
+                const longitude_status = document.getElementById("longitude_status");
+                longitude_status.innerText= lon.toFixed(6);
+                plane.planeTrack.addLatLng(latln);
+                if(plane.planeTrack.getLatLngs().length > 5)
+                {
+                    const latl = plane.planeTrack.getLatLngs();
+                    latl.shift();
+                    plane.planeTrack.setLatLngs(latl);
+                }
+                plane.map.setView(latln);
+                ///////////////////////////////////////////////////
+
+                ////Update sensor monitor and graph data///////////////////////////////////
+                i+=10;
+                updateSensorMonitorValue(airspeed_id, (20.0 + ran).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(uav_speed_id, (2.5 + ran).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(temperature_id, (30.5 + ran).toFixed(1) + ' m/s');
+                
+                const graph1_val1_data = Math.random().toFixed(2);
+                const graph1_val1 = document.getElementById('graph1_val1');
+                graph1_val1.innerText = graph1_val1_data;
+                
+                if(graph1.data.labels.length > 20)
+                {
+                    graph1.data.labels.shift();
+                    graph1.data.datasets[0].data.shift();
+                    graph1.data.datasets[1].data.shift();
+                    graph1.data.datasets[2].data.shift();
+                }
+                graph1.data.labels.push("12:00");
+                graph1.data.datasets[0].data.push(graph1_val1_data);
+                graph1.data.datasets[1].data.push(Math.random());
+                graph1.data.datasets[2].data.push(Math.random());
+                graph1.update();
+
+                if(graph2.data.labels.length > 20)
+                {
+                    graph2.data.labels.shift();
+                    graph2.data.datasets[0].data.shift();
+                    graph2.data.datasets[1].data.shift();
+
+                }
+                graph2.data.labels.push("12:00");
+                graph2.data.datasets[0].data.push(Math.random());
+                graph2.data.datasets[1].data.push(Math.random());
+                graph2.update();
+                /////////////////////////////////////////////////////////////////
+
+            }, 1000);
         }
 
         function onLocIconClick(){
@@ -316,74 +472,19 @@
         onDashIconClick();
         // onLocIconClick()
 
-        
-        var socket = io();
-        var is_open = false;
-        var current_query = '';
 
-        socket.on('update', (msg) => {
-            console.log('update');
-            console.log(msg);
-            // if(current_query != ''){
-            //     console.log('get data');
-            //     socket.emit('query_data', {'id' : current_query});
-            // }
-        }); // data in database updated
-    </script>
+        // var socket = io();
+        // var is_open = false;
+        // var current_query = '';
 
-    <script>
-        // const ADDR = '172.25.27.177'
-        const ADDR = '192.168.131.187'
-        const PORT = 8000
-
-        var ws = new WebSocket(`ws://${ADDR}:${PORT}/`);
-        // var ws_connected = false
-        ws.onmessage = (msg) => {
-            ws_connected = true
-            //   const rawdata = msg.data
-            console.log(msg)
-
-            //   const data = rawdata.replace(/[^\d,.^\n^\-]/g,"");
-
-            //   console.log(data)
-            //   if(data.length>0) {
-            //       console.log(data.toString())
-            //       const payload = {
-            //           id : 'serialdata',
-            //           data : data.toString()
-            //       }
-            //       requestServer('backend/request',JSON.stringify(payload))
-            //   }
-        };
-
-
-        ws.onopen = (msg) => {
-            ws.send("connecting")
-            console.log("Vehicle Connected")
-            ws_connected = true
-        }
-
-        ws.onclose = (msg) => {
-            console.log("Vehicle Disconnected")
-            ws_connected = false
-            reconnectSocket(ADDR, PORT)
-        }
-
-        const connectSocket = (addr, port) =>
-        {
-            ws = new WebSocket(`ws://${addr}:${port}/`);
-        }
-
-        const reconnectSocket = (addr, port) =>
-        {
-            setTimeout(()=>{
-                connectSocket(addr, port)
-                setTimeout(()=>{
-                if(!ws_connected)
-                    reconnectSocket(addr, port)
-                }, 500)
-            }, 500)
-        }
+        // socket.on('update', (msg) => {
+        //     console.log('update');
+        //     console.log(msg);
+        //     // if(current_query != ''){
+        //     //     console.log('get data');
+        //     //     socket.emit('query_data', {'id' : current_query});
+        //     // }
+        // }); // data in database updated
     </script>
 
 </html>
