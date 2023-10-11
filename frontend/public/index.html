@@ -382,35 +382,76 @@
             const graph2 = createSensorGraph2('graph2', 'sensor2');
             const plane = createMap("map");
 
-             // Update graph
-             let i = 0;
-
-            var width = 400,
-                height = 400,
-                buffer = new Uint8ClampedArray(width * height * 4);
-            
-            function randomizeBuffer() {
-                for(var y = 0; y < height; y++) {
-                    for(var x = 0; x < width; x++) {
-                        const ran = Math.floor(Math.random() * 200);
-                        var pos = (y * width + x) * 4; // position in buffer based on x and y
-                        buffer[pos  ] = 50 + ran;           // some R value [0, 255]
-                        buffer[pos+1] = 150;           // some G value
-                        buffer[pos+2] = 50 + ran;           // some B value
-                        buffer[pos+3] = 255;           // set alpha channel
-                    }
-                }
-            }
-            
             function rad_to_deg(radians)
             {
                 var pi = Math.PI;
                 return radians * (180/pi);
             }
 
+             // Update graph
+             let i = 0;
+            // function randomizeBuffer() {
+            //     for(var y = 0; y < height; y++) {
+            //         for(var x = 0; x < width; x++) {
+            //             const ran = Math.floor(Math.random() * 200);
+            //             var pos = (y * width + x) * 4; // position in buffer based on x and y
+            //             buffer[pos  ] = 50 + ran;           // some R value [0, 255]
+            //             buffer[pos+1] = 150;           // some G value
+            //             buffer[pos+2] = 50 + ran;           // some B value
+            //             buffer[pos+3] = 255;           // set alpha channel
+            //         }
+            //     }
+            // }
+
+            function drawToBuffer(data) {
+                const min = Math.min(...data);
+                const new_data = [];
+                data.forEach(data_ => {
+                    new_data.push(data_ - min);
+                });
+                const max = Math.max(...new_data);
+                const scale = 255.0/max;
+
+                for(var y = 0; y < height; y++) {
+                    for(var x = 0; x < width; x++) {
+                        const ran = Math.floor(Math.random() * 200);
+                        var pos = (y * width + x) * 4; // position in buffer based on x and y
+                        const val = new_data[x+y*width] * scale;
+                        buffer[pos  ] = val;           // some R value [0,255]
+                        buffer[pos+1] = val;           // some G value
+                        buffer[pos+2] = val;           // some B value
+                        buffer[pos+3] = 255;           // set alpha channel
+                    }
+                }
+            }
+
+            var width = 8,
+                height = 8,
+                buffer = new Uint8ClampedArray(width * height * 4);
+                buffer_in = new Uint8ClampedArray(64 * 64 * 4);
+
+            const c_thermal_camera = document.getElementById(thermal_camera);
+            const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+            ctx_thermal_camera.scale(4,4);
             function updateDataD(msg)
             {
-                console.log('over');
+                ///Thermal Camera/////////////////////////////////
+                // randomizeBuffer();
+                drawToBuffer(msg.thermal_data);
+                const c_thermal_camera = document.getElementById(thermal_camera);
+                const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+                // var idata = ctx_thermal_camera.createImageData(width, height);
+                // idata.data.set(buffer);
+                var img = new ImageData(buffer, width, height);
+
+                createImageBitmap(img).then(renderer => 
+                    ctx_thermal_camera.drawImage(renderer, 0,0, 40, 40)
+                )
+
+                // ctx_thermal_camera.putImageData(idata, 0, 0);
+                // ctx_thermal_camera.putImageData(idata, 0, 0);
+                /////////////////////////////////////////////////
+
                 ////Update sensor monitor and graph data///////////////////////////////////
                 updateSensorMonitorValue(airspeed_id, (0).toFixed(1) + ' m/s');
                 updateSensorMonitorValue(uav_speed_id, (0).toFixed(1) + ' m/s');
