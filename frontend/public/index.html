@@ -107,17 +107,22 @@
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
                         <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
-                        <div class="col" id="graph1_val1" style="text-align: center; font-size: 1.1vw;">2.98</div>
+                        <div class="col" id="graph1_val1" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
                         <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
-                        <div class="col" id="graph1_val2" style="text-align: center; font-size: 1.1vw;">0.78</div>
+                        <div class="col" id="graph1_val2" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
                         <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">CH4</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
-                        <div class="col" id="graph1_val3" style="text-align: center; font-size: 1.1vw;">0.5</div>
+                        <div class="col" id="graph1_val3" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: purple;"></i></div>
+                        <div class="col-3" style="text-align: start; color: purple;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" id="graph1_val4" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                 </div>
             </div>
@@ -134,12 +139,17 @@
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
                         <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
-                        <div class="col" id="graph2_val1" style="text-align: center; font-size: 1.1vw;">0.56</div>
+                        <div class="col" id="graph2_val1" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                     <div class="row">
                         <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
-                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">VOC</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
-                        <div class="col" id="graph2_val2" style="text-align: center; font-size: 1.1vw;">0.53</div>
+                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">Dust</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">Density</span></div>
+                        <div class="col" id="graph2_val2" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
+                        <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">VOC</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
+                        <div class="col" id="graph2_val3" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                 </div>
             </div>
@@ -151,36 +161,42 @@
             const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['12:30:20', '12:30:22', '12:30:24', '12:30:26', '12:30:28', '12:30:30', '12:30:33'],
+                labels: [],
                 datasets:[{
                     label: 'label',
-                    data: [2.8, 2.7, 2.65, 2.94, 2.98, 2.96, 2.98],
+                    data: [],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: '#FF4301',
                     borderColor: '#FF4301',
                     color: '#444444',
-                    // fontColor:'#FFFFFF',
                 },
                 {
                     label: label,
-                    data: [0.78, 0.76, 0.75, 0.78, 0.78, 0.78, 0.78],
+                    data: [],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: 'aqua',
                     borderColor: 'aqua',
                     color: '#444444',
-                    // fontColor:'#FFFFFF',
                 },
                 {
                     label: label,
-                    data: [0.5, 0.5, 0.54, 0.45, 0.5, 0.5, 0.5],
+                    data: [],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: 'greenyellow',
                     borderColor: 'greenyellow',
                     color: '#444444',
-                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'purple',
+                    borderColor: 'purple',
+                    color: '#444444',
                 }]
             },
             options: {
@@ -216,10 +232,10 @@
             const chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['12:30:20', '12:30:22', '12:30:24', '12:30:26', '12:30:28', '12:30:30', '12:30:33'],
+                labels: [],
                 datasets:[{
                     label: 'label',
-                    data: [0.53, 0.51, 0.52, 0.53, 0.52, 0.52, 0.53],
+                    data: [],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: '#FF4301',
@@ -229,11 +245,21 @@
                 },
                 {
                     label: label,
-                    data: [0.54, 0.54, 0.56, 0.54, 0.56, 0.56, 0.56],
+                    data: [],
                     fill: false,
                     tension: 0.3,
                     backgroundColor: 'aqua',
                     borderColor: 'aqua',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'greenyellow',
+                    borderColor: 'greenyellow',
                     color: '#444444',
                     // fontColor:'#FFFFFF',
                 }]
@@ -338,6 +364,11 @@
             val.innerText = value;
         }
 
+        function updateData(msg)
+        {
+            console.log(msg);
+        }
+
         function onDashIconClick(){
             createContentLayout("dash");
             const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
@@ -377,85 +408,146 @@
                 return radians * (180/pi);
             }
 
-            setInterval(()=>{
-                console.log("update");
-                
-                ///Thermal Camera/////////////////////////////////
-                randomizeBuffer();
-                const c_thermal_camera = document.getElementById(thermal_camera);
-                const ctx_thermal_camera = c_thermal_camera.getContext("2d");
-                ctx_thermal_camera.moveTo(0, 0);
-                ctx_thermal_camera.lineTo(200, 100);
-                ctx_thermal_camera.stroke();
-                var idata = ctx_thermal_camera.createImageData(width, height);
-                idata.data.set(buffer);
-                ctx_thermal_camera.putImageData(idata, 0, 0);
-                /////////////////////////////////////////////////
-                
-                ////Map Manipulation/////////////////////////////
-                const ran = Math.floor(Math.random() * 100) * 0.1;
-                const ran1 = Math.floor(Math.random() * 100) * 0.1;
-                
-                const last_latlon = plane.planeMarker.getLatLng();
-                const lat = -7.761728519274012 + ran * 0.001;
-                const lon = 110.23037834124277 + ran1 * 0.001;
-                const latln = new L.LatLng(lat, lon);
-                plane.planeMarker.setLatLng(latln);///
-                const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
-                plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
-                const altitude_status = document.getElementById("altitude_status");
-                altitude_status.innerText= ran.toFixed(2);
-                const latitude_status = document.getElementById("latitude_status");
-                latitude_status.innerText= lat.toFixed(6);
-                const longitude_status = document.getElementById("longitude_status");
-                longitude_status.innerText= lon.toFixed(6);
-                plane.planeTrack.addLatLng(latln);
-                if(plane.planeTrack.getLatLngs().length > 5)
-                {
-                    const latl = plane.planeTrack.getLatLngs();
-                    latl.shift();
-                    plane.planeTrack.setLatLngs(latl);
-                }
-                plane.map.setView(latln);
-                ///////////////////////////////////////////////////
-
+            function updateDataD(msg)
+            {
+                console.log('over');
                 ////Update sensor monitor and graph data///////////////////////////////////
-                i+=10;
-                updateSensorMonitorValue(airspeed_id, (20.0 + ran).toFixed(1) + ' m/s');
-                updateSensorMonitorValue(uav_speed_id, (2.5 + ran).toFixed(1) + ' m/s');
-                updateSensorMonitorValue(temperature_id, (30.5 + ran).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(airspeed_id, (0).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(uav_speed_id, (0).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(temperature_id, (0).toFixed(1) + ' m/s');
                 
-                const graph1_val1_data = Math.random().toFixed(2);
-                const graph1_val1 = document.getElementById('graph1_val1');
-                graph1_val1.innerText = graph1_val1_data;
-                
+                const time_data = msg.time.slice(0, 8);
+
+                function setGraphData(id, value){
+                    const graphvaldata = value.toFixed(2);
+                    const graph_val = document.getElementById(id);
+                    graph_val.innerText = graphvaldata;
+                }
+
+                setGraphData('graph1_val1', msg.cjmcu_co);
+                setGraphData('graph1_val2', msg.tgs2600_co);
+                setGraphData('graph1_val3', msg.tgs2600_ch4);
+                setGraphData('graph1_val4', msg.tgs2600_h2s);
+
+                setGraphData('graph2_val1', msg.tgs2602_nh3);
+                setGraphData('graph2_val2', msg.dust_density);
+                setGraphData('graph2_val3', msg.tgs2602_voc);
+
                 if(graph1.data.labels.length > 20)
                 {
                     graph1.data.labels.shift();
                     graph1.data.datasets[0].data.shift();
                     graph1.data.datasets[1].data.shift();
                     graph1.data.datasets[2].data.shift();
+                    graph1.data.datasets[3].data.shift();
                 }
-                graph1.data.labels.push("12:00");
-                graph1.data.datasets[0].data.push(graph1_val1_data);
-                graph1.data.datasets[1].data.push(Math.random());
-                graph1.data.datasets[2].data.push(Math.random());
+                graph1.data.labels.push(time_data);
+                graph1.data.datasets[0].data.push(msg.cjmcu_co);
+                graph1.data.datasets[1].data.push(msg.tgs2600_co);
+                graph1.data.datasets[2].data.push(msg.tgs2600_ch4);
+                graph1.data.datasets[3].data.push(msg.tgs2600_h2s);
                 graph1.update();
 
                 if(graph2.data.labels.length > 20)
                 {
                     graph2.data.labels.shift();
-                    graph2.data.datasets[0].data.shift();
-                    graph2.data.datasets[1].data.shift();
+                    graph2.data.datasets.forEach((dataset)=>{
+                        dataset.data.shift();
+                    });
+                    // graph2.data.datasets[0].data.shift();
+                    // graph2.data.datasets[1].data.shift();
+                    // graph2.data.datasets[2].data.shift();
 
                 }
-                graph2.data.labels.push("12:00");
-                graph2.data.datasets[0].data.push(Math.random());
-                graph2.data.datasets[1].data.push(Math.random());
+                graph2.data.labels.push(time_data);
+                graph2.data.datasets[0].data.push(msg.tgs2602_nh3);
+                graph2.data.datasets[1].data.push(msg.dust_density);
+                graph2.data.datasets[2].data.push(msg.tgs2602_voc);
                 graph2.update();
                 /////////////////////////////////////////////////////////////////
+            }
 
-            }, 1000);
+            updateData = updateDataD // override function updateData
+
+            // setInterval(()=>{
+            //     console.log("update");
+                
+            //     ///Thermal Camera/////////////////////////////////
+            //     randomizeBuffer();
+            //     const c_thermal_camera = document.getElementById(thermal_camera);
+            //     const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+            //     ctx_thermal_camera.moveTo(0, 0);
+            //     ctx_thermal_camera.lineTo(200, 100);
+            //     ctx_thermal_camera.stroke();
+            //     var idata = ctx_thermal_camera.createImageData(width, height);
+            //     idata.data.set(buffer);
+            //     ctx_thermal_camera.putImageData(idata, 0, 0);
+            //     /////////////////////////////////////////////////
+                
+            //     ////Map Manipulation/////////////////////////////
+            //     const ran = Math.floor(Math.random() * 100) * 0.1;
+            //     const ran1 = Math.floor(Math.random() * 100) * 0.1;
+                
+            //     const last_latlon = plane.planeMarker.getLatLng();
+            //     const lat = -7.761728519274012 + ran * 0.001;
+            //     const lon = 110.23037834124277 + ran1 * 0.001;
+            //     const latln = new L.LatLng(lat, lon);
+            //     plane.planeMarker.setLatLng(latln);///
+            //     const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
+            //     plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
+            //     const altitude_status = document.getElementById("altitude_status");
+            //     altitude_status.innerText= ran.toFixed(2);
+            //     const latitude_status = document.getElementById("latitude_status");
+            //     latitude_status.innerText= lat.toFixed(6);
+            //     const longitude_status = document.getElementById("longitude_status");
+            //     longitude_status.innerText= lon.toFixed(6);
+            //     plane.planeTrack.addLatLng(latln);
+            //     if(plane.planeTrack.getLatLngs().length > 5)
+            //     {
+            //         const latl = plane.planeTrack.getLatLngs();
+            //         latl.shift();
+            //         plane.planeTrack.setLatLngs(latl);
+            //     }
+            //     plane.map.setView(latln);
+            //     ///////////////////////////////////////////////////
+
+            //     ////Update sensor monitor and graph data///////////////////////////////////
+            //     i+=10;
+            //     updateSensorMonitorValue(airspeed_id, (20.0 + ran).toFixed(1) + ' m/s');
+            //     updateSensorMonitorValue(uav_speed_id, (2.5 + ran).toFixed(1) + ' m/s');
+            //     updateSensorMonitorValue(temperature_id, (30.5 + ran).toFixed(1) + ' m/s');
+                
+            //     const graph1_val1_data = Math.random().toFixed(2);
+            //     const graph1_val1 = document.getElementById('graph1_val1');
+            //     graph1_val1.innerText = graph1_val1_data;
+                
+            //     if(graph1.data.labels.length > 20)
+            //     {
+            //         graph1.data.labels.shift();
+            //         graph1.data.datasets[0].data.shift();
+            //         graph1.data.datasets[1].data.shift();
+            //         graph1.data.datasets[2].data.shift();
+            //     }
+            //     graph1.data.labels.push("12:00");
+            //     graph1.data.datasets[0].data.push(graph1_val1_data);
+            //     graph1.data.datasets[1].data.push(Math.random());
+            //     graph1.data.datasets[2].data.push(Math.random());
+            //     graph1.update();
+
+            //     if(graph2.data.labels.length > 20)
+            //     {
+            //         graph2.data.labels.shift();
+            //         graph2.data.datasets[0].data.shift();
+            //         graph2.data.datasets[1].data.shift();
+
+            //     }
+            //     graph2.data.labels.push("12:00");
+            //     graph2.data.datasets[0].data.push(Math.random());
+            //     graph2.data.datasets[1].data.push(Math.random());
+            //     graph2.update();
+            //     /////////////////////////////////////////////////////////////////
+
+            // }, 1000);
         }
 
         function onLocIconClick(){
@@ -473,18 +565,14 @@
         // onLocIconClick()
 
 
-        // var socket = io();
-        // var is_open = false;
-        // var current_query = '';
+        var socket = io();
+        var is_open = false;
+        var current_query = '';
 
-        // socket.on('update', (msg) => {
-        //     console.log('update');
-        //     console.log(msg);
-        //     // if(current_query != ''){
-        //     //     console.log('get data');
-        //     //     socket.emit('query_data', {'id' : current_query});
-        //     // }
-        // }); // data in database updated
+        socket.on('update', (msg) => {
+            console.log('update');
+            updateData(msg);
+        }); // data in database updated
     </script>
 
 </html>
