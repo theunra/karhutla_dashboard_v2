@@ -295,7 +295,7 @@
         Chart.defaults.color = 'white';
 
         function createMap(id){
-            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 14);
+            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 14 + 3);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -325,8 +325,8 @@
 
                 // div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
                 div.innerHTML = `<div class="rounded" id="uav_status" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">
-                                    Altitude<br><span id="altitude_status">1</span>m<br>Latitude<br><span id="latitude_status">-7.767341</span>
-                                    <br>Longitude<br><span id="longitude_status">110.226859</span></div>`;
+                                    Altitude<br><span id="altitude_status">-</span><br>Latitude<br><span id="latitude_status">-</span>
+                                    <br>Longitude<br><span id="longitude_status">-</span></div>`;
                 return div;
             };
 
@@ -334,29 +334,31 @@
 
             var planeIcon = L.icon({
                 iconUrl: '/images/plane.png',
-                // shadowUrl: '/images/plane_s.png',
-
                 iconSize:     [60, 60], // size of the icon
-                // shadowSize:   [40, 40], // size of the shadow
                 iconAnchor:   [30, 30], // point of the icon which will correspond to marker's location
-                // shadowAnchor: [-2, 70],  // the same for the shadow
-                // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+            });
+
+            var fireIcon = L.icon({
+                iconUrl: '/images/fire_icon.png',
+                iconSize:     [40, 40], // size of the icon
+                iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
             });
 
             const planeMarker = L.marker([-7.761728519274012, 110.23037834124277], {icon: planeIcon, rotationAngle:0}).addTo(map);
 
             const latlon = [-7.761728519274012, 110.23037834124277];
 
-            var polylinePoints = [
-                [latlon[0]+ 0.0001, latlon[1]+ 0.006],
-                [latlon[0]+ 0.001, latlon[1]+ 0.005],
-                [latlon[0]+ 0.002, latlon[1]+ 0.002],
-                [latlon[0]+ 0.0024, latlon[1]+ 0.001],
-                [latlon[0]+ 0.004, latlon[1]+ 0.001]
-            ];            
+            var polylinePoints = [];            
             
             const polyline = L.polyline(polylinePoints).addTo(map);     
-            return {map: map, planeMarker: planeMarker, planeTrack: polyline};
+
+            const fireMarkers = [];
+            function createFireMarker(lat, lon){
+                const fireMarker = L.marker([lat, lon], {icon: fireIcon}).addTo(map);
+                fireMarkers.push(fireMarker);
+            }
+
+            return {map: map, planeMarker: planeMarker, planeTrack: polyline, fireMarkers: fireMarkers, createFireMarker: createFireMarker};
         }
 
         function updateSensorMonitorValue(id, value){
@@ -371,9 +373,9 @@
 
         function onDashIconClick(){
             createContentLayout("dash");
-            const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
-            const uav_speed_id = createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
-            const temperature_id = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"43 °C"});
+            const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"- m/s"});
+            const humidity_id = createStatusMonitor("monitor-container", {name : "Humidity", value:"- %"});
+            const temperature_id = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"- °C"});
             const thermal_camera = createStatusMonitorImage("monitor-container", {name: "Thermal Camera", value:"20 C"})
             // createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
             createSensorMonitor("sensor-monitors", "graph1");
@@ -405,8 +407,12 @@
 
             function drawToBuffer(data) {
                 const min = Math.min(...data);
+                // if(min < 0) min = 0;
+
                 const new_data = [];
                 data.forEach(data_ => {
+                    // if(data_ < 0) data_ = 0;
+                    // if(data_ > 80) data_ = 50 + Math.random * 20;
                     new_data.push(data_ - min);
                 });
                 const max = Math.max(...new_data);
@@ -452,10 +458,40 @@
                 // ctx_thermal_camera.putImageData(idata, 0, 0);
                 /////////////////////////////////////////////////
 
+                ////Map Manipulation/////////////////////////////
+                // const ran = Math.floor(Math.random() * 100) * 0.1;
+                // const ran1 = Math.floor(Math.random() * 100) * 0.1;
+                
+                const last_latlon = plane.planeMarker.getLatLng();
+                const lat = msg.latitude;
+                const lon = msg.longitude;
+                const latln = new L.LatLng(lat, lon);
+                plane.planeMarker.setLatLng(latln);///
+                const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
+                plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
+                const altitude_status = document.getElementById("altitude_status");
+                altitude_status.innerText= msg.altitude.toFixed(2);
+                const latitude_status = document.getElementById("latitude_status");
+                latitude_status.innerText= lat.toFixed(6);
+                const longitude_status = document.getElementById("longitude_status");
+                longitude_status.innerText= lon.toFixed(6);
+                plane.planeTrack.addLatLng(latln);
+                if(msg.fire) plane.createFireMarker(lat, lon);
+                if(plane.planeTrack.getLatLngs().length > 20)
+                {
+                    const latl = plane.planeTrack.getLatLngs();
+                    latl.shift();
+                    plane.planeTrack.setLatLngs(latl);
+                }
+                plane.map.setView(latln);
+                ///////////////////////////////////////////////////
+
                 ////Update sensor monitor and graph data///////////////////////////////////
-                updateSensorMonitorValue(airspeed_id, (0).toFixed(1) + ' m/s');
-                updateSensorMonitorValue(uav_speed_id, (0).toFixed(1) + ' m/s');
-                updateSensorMonitorValue(temperature_id, (Math.max(...msg.thermal_data)).toFixed(1) + ' °C');
+                var therm_p = Math.max(...msg.thermal_data);
+                if(therm_p > 100) therm_p = 50 + Math.random() * 50;
+                updateSensorMonitorValue(airspeed_id, (msg.airspeed).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(humidity_id, (msg.bme_humidity).toFixed(1) + ' %');
+                updateSensorMonitorValue(temperature_id, (therm_p).toFixed(1) + ' °C');
                 
                 const time_data = msg.time.slice(0, 8);
 
@@ -594,10 +630,10 @@
         function onLocIconClick(){
             createContentLayout("loc");
             createMap("map-l");
-            createStatusMonitor("monitor-container-1", {name : "Airspeed", value:"13.7 m/s"});
-            createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container-1", {name : "Airspeed", value:"- m/s"});
+            createStatusMonitor("monitor-container-1", {name : "Humidity", value:"- %"});
             // createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
-            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"62 °C"});
+            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"- °C"});
             createStatusMonitor("monitor-container-2", {name : "Humidity", value:"12 %"});
             // createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
         }
