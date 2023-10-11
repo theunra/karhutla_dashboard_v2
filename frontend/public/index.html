@@ -373,7 +373,7 @@
             createContentLayout("dash");
             const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"13.7 m/s"});
             const uav_speed_id = createStatusMonitor("monitor-container", {name : "UAV Speed", value:"5 m/s"});
-            const temperature_id = createStatusMonitor("monitor-container", {name : "Temperature", value:"43 °C"});
+            const temperature_id = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"43 °C"});
             const thermal_camera = createStatusMonitorImage("monitor-container", {name: "Thermal Camera", value:"20 C"})
             // createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
             createSensorMonitor("sensor-monitors", "graph1");
@@ -455,7 +455,7 @@
                 ////Update sensor monitor and graph data///////////////////////////////////
                 updateSensorMonitorValue(airspeed_id, (0).toFixed(1) + ' m/s');
                 updateSensorMonitorValue(uav_speed_id, (0).toFixed(1) + ' m/s');
-                updateSensorMonitorValue(temperature_id, (0).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(temperature_id, (Math.max(...msg.thermal_data)).toFixed(1) + ' °C');
                 
                 const time_data = msg.time.slice(0, 8);
 
