@@ -50,6 +50,17 @@
                     </div>
                     `;
                     break;
+                case "sensor":
+                    content.innerHTML =
+                    `
+                    <div class="col m-3" id="sensor-monitors" style="height: 86vh;"></div>
+                    <div class="col-4 m-3" style="height: 86vh;">
+                        <div class="row my-3" id="monitor-container1" style="height: 24vh;"></div>
+                        <div class="row my-3" id="monitor-container2" style="height: 24vh;"></div>
+                        <div class="row my-3" id="monitor-container3" style="height: 24vh;"></div>
+                    </div>
+                    `;
+                    break;
                 case "loc":
                     content.innerHTML =
                     `
@@ -69,13 +80,13 @@
             }
         }
 
-        function createStatusMonitor(id, data){
+        function createStatusMonitor(id, data, color='rgb(211, 211, 5), yellow'){
             const monitor = document.getElementById(id);
             const val_id = data.name.replace(/\s/g, "").toLowerCase();
             monitor.innerHTML += 
             `
             <div class="col me-2" style="background-color: #1D1C1C;">
-                <div class="m-1 mt-3" style="background-image: linear-gradient(to right, rgb(211, 211, 5), yellow); height: 3vh;"></div>
+                <div class="m-1 mt-3" style="background-image: linear-gradient(to right, ${color}); height: 3vh;"></div>
                 <div id="${val_id}_value" style="font-size: 3vw; padding-top: 2vh; height: 13vh;">${data.value}</div>
                 <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
             </div>
@@ -152,6 +163,18 @@
                         <div class="col" id="graph2_val3" style="text-align: center; font-size: 1.1vw;">-</div>
                     </div>
                 </div>
+            </div>
+            `
+        }
+
+        function createSensorMonitor3(id, graph_ids){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[0]}" style="height: 40vh; width: 18vw;"></canvas></div>
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[1]}" style="height: 40vh; width: 18vw;"></canvas></div>
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[2]}" style="height: 40vh; width: 18vw;"></canvas></div>
             </div>
             `
         }
@@ -292,6 +315,85 @@
             return chart;
         }
 
+        const graph_option = {
+                responsive:false,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    }
+                },
+                plugins:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            }
+
+        function createSensorGraph3(id, label, colors) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[
+                {
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: colors[0],
+                    borderColor: colors[0],
+                    color: '#444444',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: colors[1],
+                    borderColor: colors[1],
+                    color: '#444444',
+                }]
+            },
+            options: graph_option
+            });
+
+            return chart;
+        }
+
+        function createSensorGraph4(id, label, color) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[
+                {
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: color,
+                    borderColor: color,
+                    color: '#444444',
+                }]
+            },
+            options: graph_option
+            });
+
+            return chart;
+        }
+
         Chart.defaults.color = 'white';
 
         function createMap(id){
@@ -369,6 +471,100 @@
         function updateData(msg)
         {
             console.log(msg);
+        }
+
+        function onSensorIconClick(){
+            createContentLayout("sensor");
+            const monitor_cjmcu_co      = createStatusMonitor("monitor-container1", {name : "CJMCU CO"    , value:"-"}, 'rgb(100,100,100), red');
+            const monitor_tgs2600_co    = createStatusMonitor("monitor-container1", {name : "TGS2600 CO"  , value:"-"}, 'rgb(100,100,100), blue');
+            const monitor_tgs2600_ch4   = createStatusMonitor("monitor-container1", {name : "TGS2600 CH4" , value:"-"}, 'rgb(100,100,100), aqua');
+            const monitor_tgs2600_h2s   = createStatusMonitor("monitor-container2", {name : "TGS2600 H2S" , value:"-"}, 'rgb(100,100,100), greenyellow');
+            const monitor_tgs2602_nh3   = createStatusMonitor("monitor-container2", {name : "TGS2600 NH3" , value:"-"}, 'rgb(100,100,100), green');
+            const monitor_tgs2602_voc   = createStatusMonitor("monitor-container2", {name : "TGS2600 VOC" , value:"-"}, 'rgb(100,100,100), orange');
+            const monitor_humidity      = createStatusMonitor("monitor-container3", {name : "BME Humidity", value:"-"}, 'rgb(100,100,100), yellow');
+            const monitor_dust          = createStatusMonitor("monitor-container3", {name : "Dust Density", value:"-"}, 'rgb(100,100,100), purple');
+
+            createSensorMonitor3("sensor-monitors", ["graph1", "graph2", "graph3"]);
+            createSensorMonitor3("sensor-monitors", ["graph4", "graph5", "graph6"]);
+            const graph1 = createSensorGraph3('graph1', 'sensor1', ['red', 'blue']);
+            const graph2 = createSensorGraph4('graph2', 'sensor1', 'aqua');
+            const graph3 = createSensorGraph4('graph3', 'sensor1', 'greenyellow');
+            const graph4 = createSensorGraph('graph4', 'sensor1',  ['green', 'orange']);
+            const graph5 = createSensorGraph4('graph5', 'sensor1', 'yellow');
+            const graph6 = createSensorGraph4('graph6', 'sensor1', 'purple');
+
+            function updateDataD(msg)
+            {
+                ////Update sensor monitor and graph data///////////////////////////////////
+                updateSensorMonitorValue(monitor_cjmcu_co, (msg.cjmcu_co).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_co, (msg.tgs2600_co).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_ch4, (msg.tgs2600_ch4).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_h2s, (msg.tgs2600_h2s).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2602_nh3, (msg.tgs2602_nh3).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2602_voc, (msg.tgs2602_voc).toFixed(1));
+                updateSensorMonitorValue(monitor_humidity, (msg.bme_humidity).toFixed(1));
+                updateSensorMonitorValue(monitor_dust, (msg.dust_density).toFixed(1));
+                // updateSensorMonitorValue(airspeed_id, (msg.airspeed).toFixed(1) + ' m/s');
+                // updateSensorMonitorValue(humidity_id, (msg.bme_humidity).toFixed(1) + ' %');
+                // updateSensorMonitorValue(temperature_id, (therm_p).toFixed(1) + ' °C');
+                
+                const time_data = msg.time.slice(0, 8);
+
+                // function setGraphData(id, value){
+                //     const graphvaldata = value.toFixed(2);
+                //     const graph_val = document.getElementById(id);
+                //     graph_val.innerText = graphvaldata;
+                // }
+
+                // setGraphData('graph1_val1', msg.cjmcu_co);
+                // setGraphData('graph1_val2', msg.tgs2600_co);
+                // setGraphData('graph1_val3', msg.tgs2600_ch4);
+                // setGraphData('graph1_val4', msg.tgs2600_h2s);
+
+                // setGraphData('graph2_val1', msg.tgs2602_nh3);
+                // setGraphData('graph2_val2', msg.dust_density);
+                // setGraphData('graph2_val3', msg.tgs2602_voc);
+
+                // if(graph1.data.labels.length > 20)
+                // {
+                //     graph1.data.labels.shift();
+                //     graph1.data.datasets[0].data.shift();
+                //     graph1.data.datasets[1].data.shift();
+                //     graph1.data.datasets[2].data.shift();
+                //     graph1.data.datasets[3].data.shift();
+                // }
+                // graph1.data.labels.push(time_data);
+                // graph1.data.datasets[0].data.push(msg.cjmcu_co);
+                // graph1.data.datasets[1].data.push(msg.tgs2600_co);
+                // graph1.data.datasets[2].data.push(msg.tgs2600_ch4);
+                // graph1.data.datasets[3].data.push(msg.tgs2600_h2s);
+                // graph1.update();
+                
+                function insertToGraph(graph, time_data, value){
+                    if(graph.data.labels.length > 20)
+                    {
+                        graph.data.labels.shift();
+                        graph.data.datasets.forEach((dataset)=>{
+                            dataset.data.shift();
+                        });
+
+                    }
+                    graph.data.labels.push(time_data);
+                    for(let i in graph.data.datasets){
+                        graph.data.datasets[i].data.push(value[i]);
+                    }
+                    graph.update();
+                }
+
+                insertToGraph(graph1, time_data, [msg.cjmcu_co, msg.tgs2600_co]);
+                insertToGraph(graph2, time_data, [msg.tgs2600_ch4]);
+                insertToGraph(graph3, time_data, [msg.tgs2600_h2s]);
+                insertToGraph(graph4, time_data, [msg.tgs2602_nh3, msg.tgs2602_voc]);
+                insertToGraph(graph5, time_data, [msg.bme_humidity]);
+                insertToGraph(graph6, time_data, [msg.dust_density]);
+                /////////////////////////////////////////////////////////////////
+            }
+            updateData = updateDataD // override function updateData
         }
 
         function onDashIconClick(){
@@ -545,86 +741,6 @@
             }
 
             updateData = updateDataD // override function updateData
-
-            // setInterval(()=>{
-            //     console.log("update");
-                
-            //     ///Thermal Camera/////////////////////////////////
-            //     randomizeBuffer();
-            //     const c_thermal_camera = document.getElementById(thermal_camera);
-            //     const ctx_thermal_camera = c_thermal_camera.getContext("2d");
-            //     ctx_thermal_camera.moveTo(0, 0);
-            //     ctx_thermal_camera.lineTo(200, 100);
-            //     ctx_thermal_camera.stroke();
-            //     var idata = ctx_thermal_camera.createImageData(width, height);
-            //     idata.data.set(buffer);
-            //     ctx_thermal_camera.putImageData(idata, 0, 0);
-            //     /////////////////////////////////////////////////
-                
-            //     ////Map Manipulation/////////////////////////////
-            //     const ran = Math.floor(Math.random() * 100) * 0.1;
-            //     const ran1 = Math.floor(Math.random() * 100) * 0.1;
-                
-            //     const last_latlon = plane.planeMarker.getLatLng();
-            //     const lat = -7.761728519274012 + ran * 0.001;
-            //     const lon = 110.23037834124277 + ran1 * 0.001;
-            //     const latln = new L.LatLng(lat, lon);
-            //     plane.planeMarker.setLatLng(latln);///
-            //     const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
-            //     plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
-            //     const altitude_status = document.getElementById("altitude_status");
-            //     altitude_status.innerText= ran.toFixed(2);
-            //     const latitude_status = document.getElementById("latitude_status");
-            //     latitude_status.innerText= lat.toFixed(6);
-            //     const longitude_status = document.getElementById("longitude_status");
-            //     longitude_status.innerText= lon.toFixed(6);
-            //     plane.planeTrack.addLatLng(latln);
-            //     if(plane.planeTrack.getLatLngs().length > 5)
-            //     {
-            //         const latl = plane.planeTrack.getLatLngs();
-            //         latl.shift();
-            //         plane.planeTrack.setLatLngs(latl);
-            //     }
-            //     plane.map.setView(latln);
-            //     ///////////////////////////////////////////////////
-
-            //     ////Update sensor monitor and graph data///////////////////////////////////
-            //     i+=10;
-            //     updateSensorMonitorValue(airspeed_id, (20.0 + ran).toFixed(1) + ' m/s');
-            //     updateSensorMonitorValue(uav_speed_id, (2.5 + ran).toFixed(1) + ' m/s');
-            //     updateSensorMonitorValue(temperature_id, (30.5 + ran).toFixed(1) + ' m/s');
-                
-            //     const graph1_val1_data = Math.random().toFixed(2);
-            //     const graph1_val1 = document.getElementById('graph1_val1');
-            //     graph1_val1.innerText = graph1_val1_data;
-                
-            //     if(graph1.data.labels.length > 20)
-            //     {
-            //         graph1.data.labels.shift();
-            //         graph1.data.datasets[0].data.shift();
-            //         graph1.data.datasets[1].data.shift();
-            //         graph1.data.datasets[2].data.shift();
-            //     }
-            //     graph1.data.labels.push("12:00");
-            //     graph1.data.datasets[0].data.push(graph1_val1_data);
-            //     graph1.data.datasets[1].data.push(Math.random());
-            //     graph1.data.datasets[2].data.push(Math.random());
-            //     graph1.update();
-
-            //     if(graph2.data.labels.length > 20)
-            //     {
-            //         graph2.data.labels.shift();
-            //         graph2.data.datasets[0].data.shift();
-            //         graph2.data.datasets[1].data.shift();
-
-            //     }
-            //     graph2.data.labels.push("12:00");
-            //     graph2.data.datasets[0].data.push(Math.random());
-            //     graph2.data.datasets[1].data.push(Math.random());
-            //     graph2.update();
-            //     /////////////////////////////////////////////////////////////////
-
-            // }, 1000);
         }
 
         function onLocIconClick(){
@@ -638,8 +754,9 @@
             // createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
         }
 
-        onDashIconClick();
-        // onLocIconClick()
+        onSensorIconClick();
+        // onDashIconClick();
+        // onLocIconClick();
 
 
         var socket = io();

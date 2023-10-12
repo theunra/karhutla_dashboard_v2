@@ -20,11 +20,14 @@ app.use('/datas',express.static(__dirname + '/public/datas'));
 io.on('connection', (socket) => {
     console.log('new connection');
     var idx = 0;
-    setInterval(()=>{
-        if(idx > sensor_datas.length) return;
+
+    const cb = setInterval(()=>{
+        if(idx > sensor_datas.length) end();
         socket.emit('update', sensor_datas[idx]);
         idx++;
     }, 1000);
+
+    function end(){clearInterval(cb);}
 });
 
 
