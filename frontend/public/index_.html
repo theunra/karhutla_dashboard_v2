@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Saveforest.ai</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    <link rel="stylesheet" href="/styles/style.css">
+  </head>
+  <body>
+    <div class="container-fluid text-center rounded-4 px-4 py-4" style="height: 98vh;">
+        <!-- Navbar -->
+        <div class="row" style="background-image: linear-gradient(to right, #3D3D3D, #2b2b2b);">
+            <div class="col"><i class="bi bi bi-tree" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+            <div class="col-9 fs-3" style="text-align: start;"><span>Saveforest.ai</span></div>
+            <div class="col"><i class="bi bi bi-laptop" onclick="onDashIconClick()" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+            <div class="col"><i class="bi bi bi-geo-alt" onclick="onLocIconClick()" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+            <div class="col"><i class="bi bi bi-gear" style="font-size: 1.7vw;color: rgb(255, 255, 255);"></i></div>
+        </div>
+        <!-- Content -->
+        <div class="row" id="content"></div>
+    </div>
+      
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script src="/scripts/leaflet.rotatedMarker.js"></script>
+  </body>
+  
+    <script>
+        function createContentLayout(name){
+            const content = document.getElementById("content");
+            switch(name){
+                case "dash":
+                    content.innerHTML =
+                    `
+                    <div class="col-5 m-3" id="sensor-monitors" style="height: 86vh;"></div>
+                    <div class="col m-3" style="height: 86vh;">
+                        <div class="row" style="height: 60vh; background-color: #1D1C1C;"><div id="map"></div></div>
+                        <div class="row my-3" id="monitor-container" style="height: 24vh;"></div>
+                    </div>
+                    `;
+                    break;
+                case "sensor":
+                    content.innerHTML =
+                    `
+                    <div class="col m-3" id="sensor-monitors" style="height: 86vh;"></div>
+                    <div class="col-4 m-3" style="height: 86vh;">
+                        <div class="row my-3" id="monitor-container1" style="height: 24vh;"></div>
+                        <div class="row my-3" id="monitor-container2" style="height: 24vh;"></div>
+                        <div class="row my-3" id="monitor-container3" style="height: 24vh;"></div>
+                    </div>
+                    `;
+                    break;
+                case "loc":
+                    content.innerHTML =
+                    `
+                    <div class="col m-3" style="height: 86vh;">
+                        <div class="row" style="height: 60vh;">
+                            <div class="col me-3" style="height: 86vh; background-color: #1D1C1C;"> 
+                                <div id="map-l"></div>
+                            </div>
+                            <div class="col-5 ">
+                                <div class="row mb-3" id="monitor-container-1" style="height: 24vh;"></div>
+                                <div class="row mb-3" id="monitor-container-2" style="height: 24vh;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    break;
+            }
+        }
+
+        function createStatusMonitor(id, data, color='rgb(211, 211, 5), yellow'){
+            const monitor = document.getElementById(id);
+            const val_id = data.name.replace(/\s/g, "").toLowerCase();
+            monitor.innerHTML += 
+            `
+            <div class="col me-2" style="background-color: #1D1C1C;">
+                <div class="m-1 mt-3" style="background-image: linear-gradient(to right, ${color}); height: 3vh;"></div>
+                <div id="${val_id}_value" style="font-size: 3vw; padding-top: 2vh; height: 13vh;">${data.value}</div>
+                <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
+            </div>
+            `;
+            return val_id;
+        }
+
+        function createStatusMonitorImage(id, data){
+            const monitor = document.getElementById(id);
+            const val_id = data.name.replace(/\s/g, "").toLowerCase();
+            monitor.innerHTML += 
+            `
+            <div class="col me-2" style="background-color: #1D1C1C;">
+                <canvas id="${val_id}" width=140 height=140 style="background-color: greenyellow; margin-top:10px"></canvas>
+                <div style="font-size: 1.2vw; padding-top: 0.5vh; height: 4vh;">${data.name}</div>
+            </div>
+            `;
+            return val_id;
+        }
+
+
+        function createSensorMonitor(id, graph_id){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="${graph_id}" style="height: 40vh; width: 30vw;"></canvas></div>
+                <div class="col py-2 m-1" style="height: 40vh;">
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
+                        <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">CJMCU</span></div>
+                        <div class="col" id="graph1_val1" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
+                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">CO</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" id="graph1_val2" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
+                        <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">CH4</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" id="graph1_val3" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: purple;"></i></div>
+                        <div class="col-3" style="text-align: start; color: purple;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2600</span></div>
+                        <div class="col" id="graph1_val4" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+
+        function createSensorMonitor2(id, graph_id){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col-9 m-2" style="height: 40vh;"><canvas class="graph" id="${graph_id}" style="height: 40vh; width: 30vw;"></canvas></div>
+                <div class="col py-2 m-1" style="height: 40vh;">
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: red;"></i></div>
+                        <div class="col-3" style="text-align: start; color: red;"><span style="font-size: 1.2vw;">H2S</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
+                        <div class="col" id="graph2_val1" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: aqua;"></i></div>
+                        <div class="col-3" style="text-align: start; color: aqua;"><span style="font-size: 1.2vw;">Dust</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">Density</span></div>
+                        <div class="col" id="graph2_val2" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"><i class="bi bi bi-circle-fill" style="font-size: 1.2vw;color: greenyellow;"></i></div>
+                        <div class="col-3" style="text-align: start; color: greenyellow;"><span style="font-size: 1.2vw;">VOC</span><br><span style="position: relative; top: -5px; font-size: 0.8vw;">TGS2602</span></div>
+                        <div class="col" id="graph2_val3" style="text-align: center; font-size: 1.1vw;">-</div>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+
+        function createSensorMonitor3(id, graph_ids){
+            const monitor = document.getElementById(id);
+            monitor.innerHTML +=
+            `
+            <div class="row bg-dash-graph mb-3" style="height: 42vh;">
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[0]}" style="height: 40vh; width: 18vw;"></canvas></div>
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[1]}" style="height: 40vh; width: 18vw;"></canvas></div>
+                <div class="col m-2" style="height: 40vh;"><canvas class="graph" id="${graph_ids[2]}" style="height: 40vh; width: 18vw;"></canvas></div>
+            </div>
+            `
+        }
+
+        function createSensorGraph(id, label) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[{
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: '#FF4301',
+                    borderColor: '#FF4301',
+                    color: '#444444',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'aqua',
+                    borderColor: 'aqua',
+                    color: '#444444',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'greenyellow',
+                    borderColor: 'greenyellow',
+                    color: '#444444',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'purple',
+                    borderColor: 'purple',
+                    color: '#444444',
+                }]
+            },
+            options: {
+                responsive:false,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    }
+                },
+                plugins:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            }
+            });
+
+            return chart;
+        }
+
+        function createSensorGraph2(id, label) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[{
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: '#FF4301',
+                    borderColor: '#FF4301',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'aqua',
+                    borderColor: 'aqua',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: 'greenyellow',
+                    borderColor: 'greenyellow',
+                    color: '#444444',
+                    // fontColor:'#FFFFFF',
+                }]
+            },
+            options: {
+                responsive:false,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    }
+                },
+                plugins:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            }
+            });
+
+            return chart;
+        }
+
+        const graph_option = {
+                responsive:false,
+                // animation: false,
+                scaleFontColor: '#FFFFFF',
+                spanGaps:true,
+                scales:{
+                    x:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    },
+                    y:{
+                        grid: {
+                            color:'#444444',
+                        }
+                    }
+                },
+                plugins:{
+                    legend:{
+                        display:false,
+                    }
+                }
+            }
+
+        function createSensorGraph3(id, label, colors) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[
+                {
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: colors[0],
+                    borderColor: colors[0],
+                    color: '#444444',
+                },
+                {
+                    label: label,
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: colors[1],
+                    borderColor: colors[1],
+                    color: '#444444',
+                }]
+            },
+            options: graph_option
+            });
+
+            return chart;
+        }
+
+        function createSensorGraph4(id, label, color) {
+            const ctx = document.getElementById(id);
+            const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets:[
+                {
+                    label: 'label',
+                    data: [],
+                    fill: false,
+                    tension: 0.3,
+                    backgroundColor: color,
+                    borderColor: color,
+                    color: '#444444',
+                }]
+            },
+            options: graph_option
+            });
+
+            return chart;
+        }
+
+        Chart.defaults.color = 'white';
+
+        function createMap(id){
+            var map = L.map(id).setView([-7.761728519274012, 110.23037834124277], 14 + 3);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            var myIcon = L.divIcon({className: 'my-div-icon'});
+            L.marker([-7.761728519274012, 110.23037834124277], {icon: myIcon}).addTo(map);
+
+            var legend = L.control({position: 'bottomright'});
+
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend'),
+                    //grades = [0, 10, 20, 50, 100, 200, 500, 1000],
+                    grades = [0, 12, 25, 37, 50, 62, 75, 87], //pretty break untuk 8
+                    labels = [],
+                    from, to;
+
+                for (var i = 0; i < grades.length; i++) {
+                    from = grades[i];
+                    to = grades[i + 1];
+
+                    labels.push(
+                        '<i style="background:' + '#FFFFFF' + '"></i> ' +
+                        from + (to ? '&ndash;' + to : '+'));
+                }
+
+                // div.innerHTML = '<h4 style="background-color:blue;">Legenda:</h4><br>'+labels.join('<br>');
+                div.innerHTML = `<div class="rounded" id="uav_status" style="background-color: #2b2b2b; height: 15vh; width:8vw; padding-top: 1vh;">
+                                    Altitude<br><span id="altitude_status">-</span><br>Latitude<br><span id="latitude_status">-</span>
+                                    <br>Longitude<br><span id="longitude_status">-</span></div>`;
+                return div;
+            };
+
+            legend.addTo(map);
+
+            var planeIcon = L.icon({
+                iconUrl: '/images/plane.png',
+                iconSize:     [60, 60], // size of the icon
+                iconAnchor:   [30, 30], // point of the icon which will correspond to marker's location
+            });
+
+            var fireIcon = L.icon({
+                iconUrl: '/images/fire_icon.png',
+                iconSize:     [40, 40], // size of the icon
+                iconAnchor:   [20, 20], // point of the icon which will correspond to marker's location
+            });
+
+            const planeMarker = L.marker([-7.761728519274012, 110.23037834124277], {icon: planeIcon, rotationAngle:0}).addTo(map);
+
+            const latlon = [-7.761728519274012, 110.23037834124277];
+
+            var polylinePoints = [];            
+            
+            const polyline = L.polyline(polylinePoints).addTo(map);     
+
+            const fireMarkers = [];
+            function createFireMarker(lat, lon){
+                const fireMarker = L.marker([lat, lon], {icon: fireIcon}).addTo(map);
+                fireMarkers.push(fireMarker);
+            }
+
+            return {map: map, planeMarker: planeMarker, planeTrack: polyline, fireMarkers: fireMarkers, createFireMarker: createFireMarker};
+        }
+
+        function updateSensorMonitorValue(id, value){
+            const val = document.getElementById(id+'_value');
+            val.innerText = value;
+        }
+
+        function updateData(msg)
+        {
+            console.log(msg);
+        }
+
+        function onSensorIconClick(){
+            createContentLayout("sensor");
+            const monitor_cjmcu_co      = createStatusMonitor("monitor-container1", {name : "CJMCU CO"    , value:"-"}, 'rgb(100,100,100), red');
+            const monitor_tgs2600_co    = createStatusMonitor("monitor-container1", {name : "TGS2600 CO"  , value:"-"}, 'rgb(100,100,100), blue');
+            const monitor_tgs2600_ch4   = createStatusMonitor("monitor-container1", {name : "TGS2600 CH4" , value:"-"}, 'rgb(100,100,100), aqua');
+            const monitor_tgs2600_h2s   = createStatusMonitor("monitor-container2", {name : "TGS2600 H2S" , value:"-"}, 'rgb(100,100,100), greenyellow');
+            const monitor_tgs2602_nh3   = createStatusMonitor("monitor-container2", {name : "TGS2600 NH3" , value:"-"}, 'rgb(100,100,100), green');
+            const monitor_tgs2602_voc   = createStatusMonitor("monitor-container2", {name : "TGS2600 VOC" , value:"-"}, 'rgb(100,100,100), orange');
+            const monitor_humidity      = createStatusMonitor("monitor-container3", {name : "BME Humidity", value:"-"}, 'rgb(100,100,100), yellow');
+            const monitor_dust          = createStatusMonitor("monitor-container3", {name : "Dust Density", value:"-"}, 'rgb(100,100,100), purple');
+
+            createSensorMonitor3("sensor-monitors", ["graph1", "graph2", "graph3"]);
+            createSensorMonitor3("sensor-monitors", ["graph4", "graph5", "graph6"]);
+            const graph1 = createSensorGraph3('graph1', 'sensor1', ['red', 'blue']);
+            const graph2 = createSensorGraph4('graph2', 'sensor1', 'aqua');
+            const graph3 = createSensorGraph4('graph3', 'sensor1', 'greenyellow');
+            const graph4 = createSensorGraph('graph4', 'sensor1',  ['green', 'orange']);
+            const graph5 = createSensorGraph4('graph5', 'sensor1', 'yellow');
+            const graph6 = createSensorGraph4('graph6', 'sensor1', 'purple');
+
+            function updateDataD(msg)
+            {
+                ////Update sensor monitor and graph data///////////////////////////////////
+                updateSensorMonitorValue(monitor_cjmcu_co, (msg.cjmcu_co).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_co, (msg.tgs2600_co).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_ch4, (msg.tgs2600_ch4).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2600_h2s, (msg.tgs2600_h2s).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2602_nh3, (msg.tgs2602_nh3).toFixed(1));
+                updateSensorMonitorValue(monitor_tgs2602_voc, (msg.tgs2602_voc).toFixed(1));
+                updateSensorMonitorValue(monitor_humidity, (msg.bme_humidity).toFixed(1));
+                updateSensorMonitorValue(monitor_dust, (msg.dust_density).toFixed(1));
+                // updateSensorMonitorValue(airspeed_id, (msg.airspeed).toFixed(1) + ' m/s');
+                // updateSensorMonitorValue(humidity_id, (msg.bme_humidity).toFixed(1) + ' %');
+                // updateSensorMonitorValue(temperature_id, (therm_p).toFixed(1) + ' °C');
+                
+                const time_data = msg.time.slice(0, 8);
+
+                // function setGraphData(id, value){
+                //     const graphvaldata = value.toFixed(2);
+                //     const graph_val = document.getElementById(id);
+                //     graph_val.innerText = graphvaldata;
+                // }
+
+                // setGraphData('graph1_val1', msg.cjmcu_co);
+                // setGraphData('graph1_val2', msg.tgs2600_co);
+                // setGraphData('graph1_val3', msg.tgs2600_ch4);
+                // setGraphData('graph1_val4', msg.tgs2600_h2s);
+
+                // setGraphData('graph2_val1', msg.tgs2602_nh3);
+                // setGraphData('graph2_val2', msg.dust_density);
+                // setGraphData('graph2_val3', msg.tgs2602_voc);
+
+                // if(graph1.data.labels.length > 20)
+                // {
+                //     graph1.data.labels.shift();
+                //     graph1.data.datasets[0].data.shift();
+                //     graph1.data.datasets[1].data.shift();
+                //     graph1.data.datasets[2].data.shift();
+                //     graph1.data.datasets[3].data.shift();
+                // }
+                // graph1.data.labels.push(time_data);
+                // graph1.data.datasets[0].data.push(msg.cjmcu_co);
+                // graph1.data.datasets[1].data.push(msg.tgs2600_co);
+                // graph1.data.datasets[2].data.push(msg.tgs2600_ch4);
+                // graph1.data.datasets[3].data.push(msg.tgs2600_h2s);
+                // graph1.update();
+                
+                function insertToGraph(graph, time_data, value){
+                    if(graph.data.labels.length > 20)
+                    {
+                        graph.data.labels.shift();
+                        graph.data.datasets.forEach((dataset)=>{
+                            dataset.data.shift();
+                        });
+
+                    }
+                    graph.data.labels.push(time_data);
+                    for(let i in graph.data.datasets){
+                        graph.data.datasets[i].data.push(value[i]);
+                    }
+                    graph.update();
+                }
+
+                insertToGraph(graph1, time_data, [msg.cjmcu_co, msg.tgs2600_co]);
+                insertToGraph(graph2, time_data, [msg.tgs2600_ch4]);
+                insertToGraph(graph3, time_data, [msg.tgs2600_h2s]);
+                insertToGraph(graph4, time_data, [msg.tgs2602_nh3, msg.tgs2602_voc]);
+                insertToGraph(graph5, time_data, [msg.bme_humidity]);
+                insertToGraph(graph6, time_data, [msg.dust_density]);
+                /////////////////////////////////////////////////////////////////
+            }
+            updateData = updateDataD // override function updateData
+        }
+
+        
+        function onDashIconClick(){
+            createContentLayout("dash");
+            const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"- m/s"});
+            const humidity_id = createStatusMonitor("monitor-container", {name : "Humidity", value:"- %"});
+            const temperature_id = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"- °C"});
+            const thermal_camera = createStatusMonitorImage("monitor-container", {name: "Thermal Camera", value:"20 C"})
+            // createStatusMonitor("monitor-container", {name : "Humidity", value:"30 %"});
+            createSensorMonitor("sensor-monitors", "graph1");
+            createSensorMonitor2("sensor-monitors", "graph2");
+            const graph1 = createSensorGraph('graph1', 'sensor1');
+            const graph2 = createSensorGraph2('graph2', 'sensor2');
+            const plane = createMap("map");
+
+            function rad_to_deg(radians)
+            {
+                var pi = Math.PI;
+                return radians * (180/pi);
+            }
+
+             // Update graph
+             let i = 0;
+            // function randomizeBuffer() {
+            //     for(var y = 0; y < height; y++) {
+            //         for(var x = 0; x < width; x++) {
+            //             const ran = Math.floor(Math.random() * 200);
+            //             var pos = (y * width + x) * 4; // position in buffer based on x and y
+            //             buffer[pos  ] = 50 + ran;           // some R value [0, 255]
+            //             buffer[pos+1] = 150;           // some G value
+            //             buffer[pos+2] = 50 + ran;           // some B value
+            //             buffer[pos+3] = 255;           // set alpha channel
+            //         }
+            //     }
+            // }
+
+            function drawToBuffer(data) {
+                const min = Math.min(...data);
+                // if(min < 0) min = 0;
+
+                const new_data = [];
+                data.forEach(data_ => {
+                    // if(data_ < 0) data_ = 0;
+                    // if(data_ > 80) data_ = 50 + Math.random * 20;
+                    new_data.push(data_ - min);
+                });
+                const max = Math.max(...new_data);
+                const scale = 255.0/max;
+
+                for(var y = 0; y < height; y++) {
+                    for(var x = 0; x < width; x++) {
+                        const ran = Math.floor(Math.random() * 200);
+                        var pos = (y * width + x) * 4; // position in buffer based on x and y
+                        const val = new_data[x+y*width] * scale;
+                        buffer[pos  ] = val;           // some R value [0,255]
+                        buffer[pos+1] = val;           // some G value
+                        buffer[pos+2] = val;           // some B value
+                        buffer[pos+3] = 255;           // set alpha channel
+                    }
+                }
+            }
+
+            var width = 8,
+                height = 8,
+                buffer = new Uint8ClampedArray(width * height * 4);
+                buffer_in = new Uint8ClampedArray(64 * 64 * 4);
+
+            const c_thermal_camera = document.getElementById(thermal_camera);
+            const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+            ctx_thermal_camera.scale(4,4);
+            function updateDataD(msg)
+            {
+                let tm = new Date().toLocaleTimeString();
+                ///Thermal Camera/////////////////////////////////
+                // randomizeBuffer();
+                drawToBuffer(msg.thermal_data);
+                const c_thermal_camera = document.getElementById(thermal_camera);
+                const ctx_thermal_camera = c_thermal_camera.getContext("2d");
+                // var idata = ctx_thermal_camera.createImageData(width, height);
+                // idata.data.set(buffer);
+                var img = new ImageData(buffer, width, height);
+
+                createImageBitmap(img).then(renderer => 
+                    ctx_thermal_camera.drawImage(renderer, 0,0, 40, 40)
+                )
+
+                // ctx_thermal_camera.putImageData(idata, 0, 0);
+                // ctx_thermal_camera.putImageData(idata, 0, 0);
+                /////////////////////////////////////////////////
+
+                ////Map Manipulation/////////////////////////////
+                // const ran = Math.floor(Math.random() * 100) * 0.1;
+                // const ran1 = Math.floor(Math.random() * 100) * 0.1;
+                
+                const last_latlon = plane.planeMarker.getLatLng();
+                const lat = msg.latitude;
+                const lon = msg.longitude;
+                const latln = new L.LatLng(lat, lon);
+                plane.planeMarker.setLatLng(latln);///
+                const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
+                plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
+                const altitude_status = document.getElementById("altitude_status");
+                altitude_status.innerText= msg.altitude.toFixed(2);
+                const latitude_status = document.getElementById("latitude_status");
+                latitude_status.innerText= lat.toFixed(6);
+                const longitude_status = document.getElementById("longitude_status");
+                longitude_status.innerText= lon.toFixed(6);
+                plane.planeTrack.addLatLng(latln);
+                if(msg.fire) plane.createFireMarker(lat, lon);
+                if(plane.planeTrack.getLatLngs().length > 20)
+                {
+                    const latl = plane.planeTrack.getLatLngs();
+                    latl.shift();
+                    plane.planeTrack.setLatLngs(latl);
+                }
+                plane.map.setView(latln);
+                ///////////////////////////////////////////////////
+
+                ////Update sensor monitor and graph data///////////////////////////////////
+                var therm_p = Math.max(...msg.thermal_data);
+                if(therm_p > 100) therm_p = 50 + Math.random() * 50;
+                updateSensorMonitorValue(airspeed_id, (msg.airspeed).toFixed(1) + ' m/s');
+                updateSensorMonitorValue(humidity_id, (msg.bme_humidity).toFixed(1) + ' %');
+                updateSensorMonitorValue(temperature_id, (therm_p).toFixed(1) + ' °C');
+                
+                // const time_data = msg.time.slice(0, 8);
+                const time_data = tm.slice(0, 8);
+
+                function setGraphData(id, value){
+                    const graphvaldata = value.toFixed(2);
+                    const graph_val = document.getElementById(id);
+                    graph_val.innerText = graphvaldata;
+                }
+
+                setGraphData('graph1_val1', msg.cjmcu_co);
+                setGraphData('graph1_val2', msg.tgs2600_co);
+                setGraphData('graph1_val3', msg.tgs2600_ch4);
+                setGraphData('graph1_val4', msg.tgs2600_h2s);
+
+                setGraphData('graph2_val1', msg.tgs2602_nh3);
+                setGraphData('graph2_val2', msg.dust_density);
+                setGraphData('graph2_val3', msg.tgs2602_voc);
+
+                if(graph1.data.labels.length > 20)
+                {
+                    graph1.data.labels.shift();
+                    graph1.data.datasets[0].data.shift();
+                    graph1.data.datasets[1].data.shift();
+                    graph1.data.datasets[2].data.shift();
+                    graph1.data.datasets[3].data.shift();
+                }
+                graph1.data.labels.push(time_data);
+                graph1.data.datasets[0].data.push(msg.cjmcu_co);
+                graph1.data.datasets[1].data.push(msg.tgs2600_co);
+                graph1.data.datasets[2].data.push(msg.tgs2600_ch4);
+                graph1.data.datasets[3].data.push(msg.tgs2600_h2s);
+                graph1.update();
+
+                if(graph2.data.labels.length > 20)
+                {
+                    graph2.data.labels.shift();
+                    graph2.data.datasets.forEach((dataset)=>{
+                        dataset.data.shift();
+                    });
+                    // graph2.data.datasets[0].data.shift();
+                    // graph2.data.datasets[1].data.shift();
+                    // graph2.data.datasets[2].data.shift();
+
+                }
+                graph2.data.labels.push(time_data);
+                graph2.data.datasets[0].data.push(msg.tgs2602_nh3);
+                graph2.data.datasets[1].data.push(msg.dust_density);
+                graph2.data.datasets[2].data.push(msg.tgs2602_voc);
+                graph2.update();
+                /////////////////////////////////////////////////////////////////
+            }
+
+            updateData = updateDataD // override function updateData
+        }
+
+        function onLocIconClick(){
+            createContentLayout("loc");
+            createMap("map-l");
+            createStatusMonitor("monitor-container-1", {name : "Airspeed", value:"- m/s"});
+            createStatusMonitor("monitor-container-1", {name : "Humidity", value:"- %"});
+            // createStatusMonitor("monitor-container-1", {name : "UAV Speed", value:"5 m/s"});
+            createStatusMonitor("monitor-container-2", {name : "Temperature", value:"- °C"});
+            createStatusMonitor("monitor-container-2", {name : "Humidity", value:"12 %"});
+            // createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
+        }
+
+        // onSensorIconClick();
+        onDashIconClick();
+        // onLocIconClick();
+
+
+        var socket = io();
+        var is_open = false;
+        var current_query = '';
+
+        socket.on('update', (msg) => {
+            console.log('update');
+            updateData(msg);
+        }); // data in database updated
+    </script>
+
+</html>
