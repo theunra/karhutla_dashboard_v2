@@ -38,7 +38,7 @@ server.listen(port, () => {
 
 ///////////parse sensor data
 const sensor_datas = [];
-const filename = 'flylow_16_48_25_edit';
+const filename = 'kebakaran';
 fs.readFile(`./public/datas/${filename}.csv`, 'utf8', (err, data) => {
     if (err) {
       console.error(err);

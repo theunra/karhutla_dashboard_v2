@@ -567,6 +567,7 @@
             updateData = updateDataD // override function updateData
         }
 
+        
         function onDashIconClick(){
             createContentLayout("dash");
             const airspeed_id = createStatusMonitor("monitor-container", {name : "Airspeed", value:"- m/s"});
@@ -637,6 +638,7 @@
             ctx_thermal_camera.scale(4,4);
             function updateDataD(msg)
             {
+                let tm = new Date().toLocaleTimeString();
                 ///Thermal Camera/////////////////////////////////
                 // randomizeBuffer();
                 drawToBuffer(msg.thermal_data);
@@ -689,7 +691,8 @@
                 updateSensorMonitorValue(humidity_id, (msg.bme_humidity).toFixed(1) + ' %');
                 updateSensorMonitorValue(temperature_id, (therm_p).toFixed(1) + ' °C');
                 
-                const time_data = msg.time.slice(0, 8);
+                // const time_data = msg.time.slice(0, 8);
+                const time_data = tm.slice(0, 8);
 
                 function setGraphData(id, value){
                     const graphvaldata = value.toFixed(2);
@@ -754,8 +757,8 @@
             // createStatusMonitor("monitor-container-2", {name : "Humidity", value:"30 %"});
         }
 
-        onSensorIconClick();
-        // onDashIconClick();
+        // onSensorIconClick();
+        onDashIconClick();
         // onLocIconClick();
 
 

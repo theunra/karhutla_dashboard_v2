@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "backend server",
+  "description": "backend server - pyserver",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,7 +17,11 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.6.1",
     "node-fetch": "^3.3.2",
-    "sequelize": "^6.33.0"
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.33.0",
+    "socket.io": "^4.7.2",
+    "websocket": "^1.0.34"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
