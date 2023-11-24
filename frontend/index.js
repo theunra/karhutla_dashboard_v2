@@ -1,12 +1,17 @@
 const express = require('express')
 const http = require('http');
 const {Server} = require('socket.io');
+const Client = require('socket.io-client');
 const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const port = 3000;
+const backend_socket = Client.io('http://backend:3000/')
+
+const {api: api_front} = require('./controllers/api_front');
+const {get: api_back_get, post: api_back_post} = require('./controllers/api_back')
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
@@ -21,10 +26,19 @@ app.use('/pages',express.static(__dirname + '/public/pages'));
 io.on('connection', (socket) => {
     console.log('new connection');
 
-    socket.on('api', (msg) =>{
-        console.log(msg);
-        socket.emit('update', {response: 200});
+    socket.on('api', async (msg) =>{
+        const payload = await api_front.handleApi(socket, msg);
+        socket.emit('update', payload);
     })
+});
+
+
+backend_socket.on('connect_error', (error) => {
+    console.log(`Cannot connect to backend socket.io`);
+});
+
+backend_socket.on('update', async (msg) => {
+    await api_back_post.handleApi(null, msg);
 });
 
 
