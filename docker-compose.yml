@@ -20,13 +20,13 @@ services:
       - backend
       - frontend
   
-  mqtt-broker:
-    image: eclipse-mosquitto:2.0
-    volumes:
-      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-    ports:
-      - "1883:1883"
-      - "8883:8883"
+  # mqtt-broker:
+  #   image: eclipse-mosquitto:2.0
+  #   volumes:
+  #     - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+  #   ports:
+  #     - "1883:1883"
+  #     - "8883:8883"
 
   postgres:
     image: postgres:16.0

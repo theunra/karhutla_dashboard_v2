@@ -1,7 +1,6 @@
 class ApiHandler {
     constructor(){
-        this.callbacks = [];
-
+        this.callbacks = new Map();
     }
     assignCallback(id, type, key, value, callback = (socket, query) => {}){
         const params = {

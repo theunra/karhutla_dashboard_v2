@@ -5,6 +5,7 @@ services:
       dockerfile: ./backend.dev.Dockerfile
     command: npm run dev
     volumes:
+      - backend-node-modules:/app/node_modules
       - ./backend:/app
 
   frontend:
@@ -13,4 +14,9 @@ services:
       dockerfile: ./frontend.dev.Dockerfile
     command: npm run dev
     volumes:
+      - frontend-node-modules:/app/node_modules
       - ./frontend:/app
+
+volumes:
+  backend-node-modules:
+  frontend-node-modules:

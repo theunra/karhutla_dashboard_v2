@@ -3,7 +3,7 @@ const bodyparser = require('body-parser');
 const axios = require('axios');
 const mqttHandler = require('./controllers/mqtt');
 const digest = require('./controllers/digest');
-// const api = require('./controllers/api');
+const api = require('./controllers/api');
 const {Server} = require('socket.io');
 const http = require('http');
 const app = express();
@@ -20,12 +20,10 @@ const frontend_host = process.env.FRONTEND_HOST ? process.env.FRONTEND_HOST : 'f
 const frontend_port = process.env.FRONTEND_PORT ? process.env.FRONTEND_PORT : 3000;
 const frontend_addr = `http://${frontend_host}:${frontend_port}/`;
 
-const topic_athus = '/athus/data';
-const topic_sipuber = '/sipuber/data';
-const topic_tma = '/tma/data';
+const topic_uav = '/uav';
 
-mqttHandler.subscribeToTopic(topic_athus, (payload) => {
-    digest.processDataAthus(payload)
+mqttHandler.subscribeToTopic(topic_uav, (payload) => {
+    digest.processDataUAV(payload)
     .then(()=>{
         
     })
@@ -33,23 +31,20 @@ mqttHandler.subscribeToTopic(topic_athus, (payload) => {
         console.log(err);
     })
     .finally(()=>{
-        const data = JSON.parse(payload);
-        io.emit('athus', data);
+        // const data = JSON.parse(payload);
+        // io.emit('uav', data);
     });
 });
 
 io.on('connection', async (socket)=>{
     console.log('New connection on socket.io');
-    const sockets = await io.fetchSockets();
-    io.emit('clients', {client_n: sockets.length});
-    
+
     socket.on("disconnect", async () => {
-        const sockets = await io.fetchSockets();
-        io.emit('clients', {client_n: sockets.length});
     });
 
     socket.on('api', async (msg)=>{
         const payload = await api.handleGet(msg);
+        payload.query = msg;
         socket.emit('update', payload);
     });
 });
