@@ -64,3 +64,37 @@ export function createMap(id){
 
     return {map: map, planeMarker: planeMarker, planeTrack: polyline, fireMarkers: fireMarkers, createFireMarker: createFireMarker};
 }
+
+export function rad_to_deg(radians)
+{
+    var pi = Math.PI;
+    return radians * (180/pi);
+}
+
+export function updatePlane(plane, data){
+    const last_data = data[data.length - 1];
+    const last_latlon = plane.planeMarker.getLatLng();
+    const lat = last_data.latitude;
+    const lon = last_data.longitude;
+    const latln = new L.LatLng(lat, lon);
+    plane.planeMarker.setLatLng(latln);///
+    const plane_angle = Math.atan2(latln.lng - last_latlon.lng, latln.lat - last_latlon.lat);
+    plane.planeMarker.setRotationAngle(rad_to_deg(plane_angle));
+    const altitude_status = document.getElementById("altitude_status");
+    altitude_status.innerText= last_data.altitude.toFixed(2);
+    const latitude_status = document.getElementById("latitude_status");
+    latitude_status.innerText= lat.toFixed(6);
+    const longitude_status = document.getElementById("longitude_status");
+    longitude_status.innerText= lon.toFixed(6);
+    // plane.planeTrack.addLatLng(latln);
+    // plane.planeTrack = data.map((data) => new L.LatLng(data.latitude, data.longitude));
+    plane.planeTrack.setLatLngs(data.map((data) => new L.LatLng(data.latitude, data.longitude)));
+    if(last_data.fire) plane.createFireMarker(lat, lon);
+    if(plane.planeTrack.getLatLngs().length > 20)
+    {
+        const latl = plane.planeTrack.getLatLngs();
+        latl.shift();
+        plane.planeTrack.setLatLngs(latl);
+    }
+    plane.map.setView(latln);
+}

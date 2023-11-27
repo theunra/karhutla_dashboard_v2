@@ -120,8 +120,8 @@ const model = {
 
     getEnoseData: async (param) =>{
         const query = {
-            limit: 100,
-            order: [["id", "ASC"]],
+            limit: 20,
+            order: [["id", "DESC"]],
         };
         const where = {};
         
@@ -132,7 +132,16 @@ const model = {
 
         query.where = where;
 
-        return EnoseData.findAll(query);
+        const data = await EnoseData.findAll(query);
+
+        if(data){
+            data.reverse();
+            return data;
+        }
+        else {
+            return [];
+        }
+        
     },
 };
 

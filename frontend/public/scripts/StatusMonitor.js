@@ -24,3 +24,8 @@ export function createStatusMonitorImage(id, data){
     `;
     return val_id;
 }
+
+export function updateSensorMonitorValue(id, value){
+    const val = document.getElementById(id+'_value');
+    val.innerText = value;
+}
