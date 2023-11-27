@@ -25,15 +25,14 @@ const topic_uav = '/uav';
 mqttHandler.subscribeToTopic(topic_uav, (payload) => {
     digest.processDataUAV(payload)
     .then(()=>{
-        
+        const data = JSON.parse(payload);
+        data.info = 'new data';
+        data.time = new Date().toISOString();
+        io.emit('uav', {message: data});
     })
     .catch((err)=>{
         console.log(err);
     })
-    .finally(()=>{
-        // const data = JSON.parse(payload);
-        // io.emit('uav', data);
-    });
 });
 
 io.on('connection', async (socket)=>{
@@ -50,7 +49,7 @@ io.on('connection', async (socket)=>{
 });
 
 
-app.get('/api', async (req, res) => {
+app.get('/', async (req, res) => {
     console.log(req.query);
     const get = await api.handleGet(req.query);
     res.send(get);

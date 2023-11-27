@@ -62,18 +62,18 @@ const api={
      */
 
     ///////////Callback Functions//////////////////////////////////
-    // getAthusSensorData : async (query) => {
-    //     const payload = await digest.getDataAthus({
-    //         startId         : query.startId   ? parseInt(query.startId) : undefined,
-    //         endId           : query.endId     ? parseInt(query.endId)   : undefined,
-    //         startTime       : query.startTime ? query.startTime         : undefined,
-    //         endTime         : query.endTime   ? query.endTime           : undefined,
-    //         athusDeviceId   : 1,
-    //         // attributes      : ['id'], 
-    //         order           : {by: 'time', dir: 'asc'}
-    //     });
-    //     return {'message' : payload};
-    // },
+    getEnoseSensorData : async (query) => {
+        const payload = await digest.getEnoseData({
+            startId         : query.startId   ? parseInt(query.startId) : undefined,
+            endId           : query.endId     ? parseInt(query.endId)   : undefined,
+            startTime       : query.startTime ? query.startTime         : undefined,
+            endTime         : query.endTime   ? query.endTime           : undefined,
+            athusDeviceId   : 1,
+            // attributes      : ['id'], 
+            order           : {by: 'time', dir: 'asc'}
+        });
+        return {'message' : payload};
+    },
 
     // getSipuberSensorData : async (query) => {
     //     const payload = await digest.getDataSipuber({
@@ -136,13 +136,18 @@ const api={
             const cb = val;
             console.log(cb);
 
-            return cb(query);
+            const res = await cb(query);
+
+            if(res){
+                res.query = query;
+                return res;
+            } else break;
         }
 
         return 404;
     },
 }
 
-// api.assignCallback('athus', 'device', 'info', 'get-all', api.getAthusAllDevice)
+api.assignCallback('enose', 'data', 'raw', 'get', api.getEnoseSensorData)
 
 module.exports=api;

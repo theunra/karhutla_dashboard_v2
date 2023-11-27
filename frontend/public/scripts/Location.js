@@ -23,7 +23,7 @@ export function Location(){
     createStatusMonitor("monitor-container-2", {name : "Temperature", value:"- °C"});
     createStatusMonitor("monitor-container-2", {name : "Humidity", value:"12 %"});
 
-    socket_handler.handleUpdate = (msg) => {
+    socket_handler.handleOnUpdate = (msg) => {
         console.log("handle in loc");
     };
 }

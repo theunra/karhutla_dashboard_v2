@@ -83,3 +83,33 @@ export function createSensorGraph(id, label, datas) {
 
     return chart;
 }
+
+
+export function updateSensorMonitorValue(id, value){
+    const val = document.getElementById(id+'_value');
+    val.innerText = value;
+}
+
+export function insertToGraph(graph, time_data, value){
+    if(graph.data.labels.length > 100)
+    {
+        graph.data.labels.shift();
+        graph.data.datasets.forEach((dataset)=>{
+            dataset.data.shift();
+        });
+
+    }
+    graph.data.labels.push(time_data);
+    for(let i in graph.data.datasets){
+        graph.data.datasets[i].data.push(value[i]);
+    }
+    graph.update();
+}
+
+export function setDataToGraph(graph, time_datas, values){
+    graph.data.labels = time_datas;
+    for(let i in graph.data.datasets){
+        graph.data.datasets[i].data = values[i];
+    }
+    graph.update();
+}

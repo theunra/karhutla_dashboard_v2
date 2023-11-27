@@ -1,5 +1,7 @@
 import {createStatusMonitor, createStatusMonitorImage} from './StatusMonitor.js'
-import {createSensorGraph, createSensorMonitor} from './SensorGraph.js'
+import {createSensorGraph, createSensorMonitor, updateSensorMonitorValue, insertToGraph, setDataToGraph} from './SensorGraph.js'
+import { createMap } from './Map.js';
+import { createThermalImage, updateImage } from './ThermalImage.js';
 import socket_handler from './SocketHandler.js';
 
 export function Dashboard(){
@@ -15,7 +17,7 @@ export function Dashboard(){
 
     const airspeed = createStatusMonitor("monitor-container", {name : "Airspeed", value:"- m/s"});
     const humidity = createStatusMonitor("monitor-container", {name : "Humidity", value:"- %"});
-    const temperature = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"- °C"});
+    const thermal_peak = createStatusMonitor("monitor-container", {name : "Thermal Peak", value:"- °C"});
     const thermal_camera = createStatusMonitorImage("monitor-container", {name: "Thermal Camera", value:"20 C"})
 
     createSensorMonitor(
@@ -59,10 +61,55 @@ export function Dashboard(){
             {name: "Density", type: "Dust"}
         ]
     );
+
+    const thermal_image = createThermalImage(thermal_camera);
     
-    socket_handler.handleUpdate = (msg) => {
+    const plane = createMap("map");
+
+    socket_handler.handleOnUpdate = (msg) => {
         console.log("handle in dash");
+        console.log(msg);
+        
+        const data = msg.message;
+
+        if(socket_handler.compareQuery(msg.query, {id: 'enose',type: 'data',key: 'raw',value: 'get'})){
+            const last_data = data[data.length - 1];
+            const therm_p = Math.max(...last_data.thermal_data);
+
+            updateSensorMonitorValue(humidity, (last_data.bme_humidity).toFixed(1));
+            updateSensorMonitorValue(airspeed, (last_data.airspeed).toFixed(1));
+            updateSensorMonitorValue(thermal_peak, (therm_p).toFixed(1));
+
+            const time_datas = data.map((data) => data.time.split('T')[1].split('.')[0]);
+            const tgs2602_nh3_datas = data.map((data) => data.tgs2602_nh3);
+            const tgs2602_voc_datas = data.map((data) => data.tgs2602_voc);
+            const dust_density_datas = data.map((data) => data.dust_density);
+            setDataToGraph(sensor_graph_1, time_datas, [tgs2602_nh3_datas, tgs2602_voc_datas, dust_density_datas]);
+
+            updateImage(thermal_camera, last_data.thermal_data);
+        }
     };
 
-    socket_handler.request({subscribe:'sensor_data'});
+    socket_handler.handleOnUAV = (msg) => {
+        console.log("on uav");
+        console.log(msg);
+
+        const data = msg.message;
+        const therm_p = Math.max(...data.thermal_data);
+
+        updateSensorMonitorValue(humidity, (data.bme_humidity).toFixed(1));
+        updateSensorMonitorValue(airspeed, (data.airspeed).toFixed(1));
+        updateSensorMonitorValue(thermal_peak, (therm_p).toFixed(1));
+
+        insertToGraph(sensor_graph_1, data.time.split('T')[1].split('.')[0], [data.tgs2602_nh3, data.tgs2602_voc, data.dust_density]);
+
+        updateImage(thermal_camera, data.thermal_data);
+    };
+
+    socket_handler.request({
+        id: 'enose',
+        type: 'data',
+        key: 'raw',
+        value: 'get'
+    });
 }

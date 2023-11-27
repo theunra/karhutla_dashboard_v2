@@ -90,6 +90,7 @@ const model = {
         {time, altitude, airspeed, latitude, longitude, roll, pitch, yaw, cjmcu_co, bme_humidity, dust_density, 
         tgs2600_co, tgs2600_ch4, tgs2600_h2s, tgs2602_nh3, tgs2602_voc, thermal_data, fire, version}
         ) => {
+
         return {
             time            : time,
             altitude        : altitude,
@@ -110,11 +111,28 @@ const model = {
             thermal_data    : thermal_data,
             fire            : fire,
             version         : version
-        }
+        };
     },
 
     insertEnoseData: async (record) => {
         return EnoseData.create(record);
+    },
+
+    getEnoseData: async (param) =>{
+        const query = {
+            limit: 100,
+            order: [["id", "ASC"]],
+        };
+        const where = {};
+        
+        if(param.startId){
+            if(!where.id) where.id = {};
+            where.id[Op.gt] = param.startId;
+        };
+
+        query.where = where;
+
+        return EnoseData.findAll(query);
     },
 };
 

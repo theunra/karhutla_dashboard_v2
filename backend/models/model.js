@@ -3,7 +3,7 @@ const postgres = require('../lib/postgres');
 
 const {enose_model, EnoseData} = require('../models/enose.model');
 
-syncDb();
+// syncDb();
 //////////////////////////////
 async function syncDb(){
     await postgres.sync({force:true})////TESTING////////////////////////////
