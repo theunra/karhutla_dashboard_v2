@@ -3,12 +3,12 @@ const postgres = require('../lib/postgres');
 
 const {enose_model, EnoseData} = require('../models/enose.model');
 
-// syncDb();
+syncDb();
 //////////////////////////////
 async function syncDb(){
-    await postgres.sync({force:true})////TESTING////////////////////////////
-    // await sequelize.sync();
-
+    //await postgres.sync({force:true})////TESTING////////////////////////////
+    await postgres.sync();
+	/*
     const record = enose_model.createEnoseData({
         time:'2023-01-02 11:03:24',
         airspeed: 20.1,
@@ -33,7 +33,7 @@ async function syncDb(){
 
     console.log(record)
 
-    await enose_model.insertEnoseData(record);
+    await enose_model.insertEnoseData(record);*/
 
 }
 module.exports= {enose_model: enose_model};
