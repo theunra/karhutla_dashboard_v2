@@ -2,7 +2,8 @@ from paho.mqtt import client as mqtt_client
 from time import sleep
 import json
 
-broker = 'localhost'
+# broker = 'localhost'
+broker = '20.197.54.135'
 port = 1883
 topic = '/uav'
 client_id = 'uav-0'
