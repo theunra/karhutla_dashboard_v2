@@ -1,4 +1,5 @@
-const addr = "vmserver";
+//const addr = "vmserver";
+const addr = "20.197.54.135";
 var socket = io(addr, { path : "/api/socket.io"},{
 });
 
