@@ -113,8 +113,8 @@ export function Dashboard(){
             setGraphData('graph1_val_3', last_data.tgs2600_h2s);
 
             setGraphData('graph2_val_0', last_data.tgs2602_nh3);
-            setGraphData('graph2_val_1', last_data.dust_density);
-            setGraphData('graph2_val_2', last_data.tgs2602_voc);
+            setGraphData('graph2_val_1', last_data.tgs2602_voc);
+            setGraphData('graph2_val_2', last_data.dust_density);
 
             setDataToGraph(sensor_graph_1, time_datas, [cjmcu_co_datas, tgs2600_co_datas, tgs2600_ch4_datas, tgs2600_h2s_datas]);
             setDataToGraph(sensor_graph_2, time_datas, [tgs2602_nh3_datas, tgs2602_voc_datas, dust_density_datas]);

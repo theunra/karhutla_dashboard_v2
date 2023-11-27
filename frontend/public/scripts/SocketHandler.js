@@ -1,5 +1,5 @@
 //const addr = "vmserver";
-const addr = "20.197.54.135";
+const addr = "https://saveforest.cloud";
 var socket = io(addr, { path : "/api/socket.io"},{
 });
 
@@ -15,6 +15,10 @@ const socket_handler = {
 
     handleOnUAV: (msg) => {
         console.log(msg);
+    },
+
+    sendSerialData: (msg) =>{
+        socket.emit('serial', {data: msg});
     },
 
     changeMode: (mode) => {

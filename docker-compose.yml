@@ -15,8 +15,11 @@ services:
     volumes:
       - ./nginx/etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/public:/public:ro
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
       - frontend
@@ -36,6 +39,11 @@ services:
     environment:
       - POSTGRES_PASSWORD=admin
       - PGDATA=/var/lib/postgresql/data/pgdata
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
 
 volumes:
     postgres-db:

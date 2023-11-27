@@ -1,5 +1,5 @@
 // import {requestServer} from '../services/mqttHandler'
-
+import socket_handler from './SocketHandler.js';
 /**
  * Variable contains serial port selected 
  */
@@ -53,18 +53,27 @@ const serialHandler = {
                             this.connected=true
                             const chunkdata = String.fromCharCode(...value);
                             if(value!==undefined) serialdata += chunkdata
-                            decodeddata = serialdata.split('\n')
-                            serialdata = decodeddata.pop()
-                            console.log(serialdata)
+                            // decodeddata = serialdata.split('#')
+                            // serialdata = decodeddata.pop()
+                            // console.log(serialdata)
                             //strip from alphabet
-                            serialdata = serialdata.replace(/[^\d,.^\n^\-]/g,"");
-                            if(decodeddata.length>0) {
-                                console.log(decodeddata.toString())
+                            // if(serialdata.search('#') >= 0){
+                            //     console.log(serialdata.toString())
+                            //     console.log("pppppppppppppppppppppppppppppp");
+                            // }
+                            
+                            // console.log(serialdata)
+                            
+                            if(serialdata.length>0 && serialdata.search('#') >= 0) {
+                                serialdata = serialdata.replace(/[^\d,.^\n^\-]/g,"");
+                                console.log(serialdata.toString())
                                 const payload = {
                                     id : 'serialdata',
-                                    data : decodeddata.toString()
+                                    data : serialdata.toString()
                                 }
                                 // requestServer('backend/request',JSON.stringify(payload))
+                                socket_handler.sendSerialData(payload)
+                                serialdata = ''
                             }
                             break;
                         }

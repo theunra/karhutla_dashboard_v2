@@ -4,7 +4,7 @@ import { createMap, rad_to_deg , updatePlane} from './Map.js';
 import { createThermalImage, updateImage } from './ThermalImage.js';
 import socket_handler from './SocketHandler.js';
 import { SensorView } from './SensorView.js';
-import serialHandler from './serialHandler.js';
+import serialHandler from './SerialHandler.js';
 
 var status_messages = [];
 
@@ -80,6 +80,7 @@ export function Status(){
         modal.style.display = "none";
         socket_handler.mode  = "telemetry";
         socket_handler.changeMode(socket_handler.mode);
+        serialHandler.RequestSerial(57600);
     }
     
     telembtn.disabled = !serialHandler.isSupported();
@@ -122,4 +123,6 @@ export function Status(){
     }
 
     updateStatusMessages();
+
+    socket_handler.sendSerialData({data : 'ok'});
 }

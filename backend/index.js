@@ -28,10 +28,10 @@ mqttHandler.subscribeToTopic(topic_uav, (payload) => {
     if(comm_mode != 'internet') return;
     digest.processDataUAV(payload)
     .then(()=>{
-        const data = JSON.parse(payload);
-        data.info = 'new data';
-        data.time = new Date().toISOString();
-        io.emit('uav', {message: data});
+        // const data = JSON.parse(payload);
+        // data.info = 'new data';
+        // data.time = new Date().toISOString();
+        io.emit('uav', {message: 'data'});
     })
     .catch((err)=>{
         console.log(err);
@@ -48,14 +48,24 @@ io.on('connection', async (socket)=>{
         const payload = await api.handleGet(msg);
         payload.query = msg;
         socket.emit('update', payload);
-        socket.comm_mode = 'internet';
-        comm_mode = socket.comm_mode;
     });
 
     socket.on('mode', async (msg) => {
         socket.comm_mode = msg.mode;
         comm_mode = socket.comm_mode;
         console.log(socket.comm_mode);
+    });
+    
+    socket.on('serial', async (msg) => {
+        // console.log(msg)
+        if(comm_mode != 'telemetry') return;
+        digest.processDataUAV(msg.data.data)
+        .then(()=>{
+            io.emit('uav', {});
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
     });
 });
 
