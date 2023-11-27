@@ -38,6 +38,7 @@
     <script type="module">
         import {Dashboard, } from "/scripts/Dashboard.js";
         import {Location} from "/scripts/Location.js";
+        import {Status} from "/scripts/Status.js";
 
         function routeNavButton(id, cb){
           const button = document.getElementById(id);
@@ -48,6 +49,7 @@
 
         routeNavButton('nav_button_dash', Dashboard);
         routeNavButton('nav_button_loc', Location);
+        routeNavButton('nav_button_stat', Status);
         
     </script>
   </body>

@@ -3,6 +3,7 @@ var socket = io(addr, { path : "/api/socket.io"},{
 });
 
 const socket_handler = {
+    mode : "internet",
     request: (msg) =>{
         socket.emit('api', msg);
     },
@@ -13,6 +14,10 @@ const socket_handler = {
 
     handleOnUAV: (msg) => {
         console.log(msg);
+    },
+
+    changeMode: (mode) => {
+        socket.emit('mode', {mode: mode});
     },
 
     compareQuery: (query, key) => {

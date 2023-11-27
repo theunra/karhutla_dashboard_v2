@@ -107,3 +107,96 @@ body{
     /* width: 60vw; */
     height: 84vh; 
 }
+
+.status-head-text{
+    font-size: 1.5vw;
+    font-weight: 500;
+}
+.status-button{
+    border-radius: 20px;
+    color: white;
+    background-color: green;
+    font-size: 1.0vw;
+    font-weight: 500;
+    width: 6vw;
+    margin: 10px;
+}
+.status-log-button{
+    margin-top: 20px;
+    margin-right: 50px;
+    width: 5vw;
+}
+
+.status-plane{
+    width: 10vw;
+}
+
+.status-log-panel{
+    background-color: #2b2b2b;
+    border-radius: 20px;
+    margin-top: 3vh;
+    width: 60vw;
+    height: 70vh;
+}
+.status-log-head{
+    font-size: 1.5vw;
+    font-weight: 500;
+}
+.status-log-messages{
+    padding: 50px;
+    padding-top: 0;
+    font-weight: 300;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 10%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .status-button-modal{
+    border-radius: 20px;
+    color: white;
+    background-color: green;
+    font-size: 1.0vw;
+    font-weight: 500;
+    width: 6vw;
+    margin: 10px;
+    /* position: relative; */
+    /* left: 30vw; */
+}
+.status-button-modal:disabled{
+    background-color: gray;
+}

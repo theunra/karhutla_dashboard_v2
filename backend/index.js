@@ -22,7 +22,10 @@ const frontend_addr = `http://${frontend_host}:${frontend_port}/`;
 
 const topic_uav = '/uav';
 
+var comm_mode = 'internet';
+
 mqttHandler.subscribeToTopic(topic_uav, (payload) => {
+    if(comm_mode != 'internet') return;
     digest.processDataUAV(payload)
     .then(()=>{
         const data = JSON.parse(payload);
@@ -45,6 +48,14 @@ io.on('connection', async (socket)=>{
         const payload = await api.handleGet(msg);
         payload.query = msg;
         socket.emit('update', payload);
+        socket.comm_mode = 'internet';
+        comm_mode = socket.comm_mode;
+    });
+
+    socket.on('mode', async (msg) => {
+        socket.comm_mode = msg.mode;
+        comm_mode = socket.comm_mode;
+        console.log(socket.comm_mode);
     });
 });
 
