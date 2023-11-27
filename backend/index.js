@@ -25,6 +25,7 @@ const topic_uav = '/uav';
 var comm_mode = 'internet';
 
 mqttHandler.subscribeToTopic(topic_uav, (payload) => {
+    // console.log(payload)
     if(comm_mode != 'internet') return;
     digest.processDataUAV(payload)
     .then(()=>{
