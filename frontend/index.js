@@ -7,7 +7,7 @@ const fs = require('fs');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const port = 3000;
+const port = 7070;
 const backend_socket = Client.io('http://backend:3000/')
 
 const {api: api_front} = require('./controllers/api_front');
