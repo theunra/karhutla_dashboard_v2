@@ -8,7 +8,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const port = 7070;
-const backend_socket = Client.io('http://backend:3000/')
+const backend_socket = Client.io('http://localhost:7071/')
 
 const {api: api_front} = require('./controllers/api_front');
 const {get: api_back_get, post: api_back_post} = require('./controllers/api_back')

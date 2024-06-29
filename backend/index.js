@@ -14,10 +14,10 @@ const io = new Server(server,{
     }
 });
 
-const port = process.env.PORT ? process.env.PORT : 3000;
+const port = process.env.PORT ? process.env.PORT : 7071;
 
-const frontend_host = process.env.FRONTEND_HOST ? process.env.FRONTEND_HOST : 'frontend';
-const frontend_port = process.env.FRONTEND_PORT ? process.env.FRONTEND_PORT : 3000;
+const frontend_host = process.env.FRONTEND_HOST ? process.env.FRONTEND_HOST : 'localhost';
+const frontend_port = process.env.FRONTEND_PORT ? process.env.FRONTEND_PORT : 7070;
 const frontend_addr = `http://${frontend_host}:${frontend_port}/`;
 
 const topic_uav = '/uav';
@@ -26,6 +26,7 @@ var comm_mode = 'internet';
 
 mqttHandler.subscribeToTopic(topic_uav, (payload) => {
     // console.log(payload)
+    console.log("received uav");
     if(comm_mode != 'internet') return;
     digest.processDataUAV(payload)
     .then(()=>{

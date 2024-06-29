@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 
 const protocol = 'mqtt';
-const host = process.env.MQTT_HOST ? process.env.MQTT_HOST : 'mqtt-broker';
+const host = process.env.MQTT_HOST ? process.env.MQTT_HOST : 'localhost';
 const port = process.env.MQTT_PORT ? process.env.MQTT_PORT : 1883;
 
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;

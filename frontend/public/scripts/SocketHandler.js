@@ -1,7 +1,9 @@
-//const addr = "vmserver";
-const addr = "https://saveforest.cloud";
+const addr = "sites.saveforest.cloud";
+//const addr = "https://sites.saveforest.cloud/api";
 var socket = io(addr, { path : "/api/socket.io"},{
 });
+
+//var socket = io(addr);
 
 const socket_handler = {
     mode : "internet",
